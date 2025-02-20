@@ -19,10 +19,15 @@
     text-align: center;
     background-color: var(--color-accent);
     font-size: fluid-text(14,12);
+    text-transform: uppercase;
+    font-weight: 600;   
+    color: var(--color-dark);
+  
    
     &-inner{
         padding-block: rem(8);
-        border-bottom: var(--border);        
+        border-bottom: var(--border);  
+            
     }
 
     @include mobile {
@@ -32,17 +37,7 @@
     @include mobile-s {
       font-size: rem(10);
     }
-
-    &-link {
-        &:hover{
-            color: var(--color-light);
-        }
-      .icon {
-        @include mobile-s {
-          column-gap: rem(5);
-        }
-      }
-    }
+  
   }
 
   &__body {
@@ -121,7 +116,7 @@
 
       &.is-active {
         color: var(--color-dark);
-        font-weight: 600;   
+        text-decoration: underline;  
         border-radius: rem(10);
         pointer-events: none;
       }

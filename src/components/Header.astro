@@ -4,13 +4,13 @@ import logo from "../assets/logo.png"
 import facebook from "../assets/icons/facebook.png"
 ---
 <header class="header">
-    <!-- <div class="header__promo">
+    <div class="header__promo">
         <div class="header__promo-inner container">
-            <a class="header__promo-link" href="/">
-                <span class="icon icon--yellow-arrow">Dzieło Rąk Naszych Wspieraj</span>
-            </a>
+            <div class="header__promo-link">
+                <span >Stowarzyszenie na rzecz Rozwoju Badań Historycznych i Edukacji Monumentum</span>
+            </div>
         </div>
-    </div> -->
+    </div>
     <div class="header__body">
         <div class="header__body-inner container">
             <a 
@@ -19,12 +19,14 @@ import facebook from "../assets/icons/facebook.png"
                 aria-label="Home"
                 title="Home"
             >
-                <Image class="logo__image" src={logo} alt="logo" width={100} height={100} >
+                <Image class="logo__image" src={logo} alt="logo" width={70} height={70} >
                 
             </a>
             <div>
-                <Image class="logo__image" src={facebook} alt="logo" width={32} height={32} ></Image>
-            </div>
+                <a href="https://www.facebook.com/profile.php?id=61556657347480" target="_blank" rel="noopener noreferrer">
+                  <Image class="logo__image" src={facebook} alt="Facebook logo" width={32} height={32} />
+                </a>
+              </div>
             <div class="header__overlay" data-js-header-overlay>
                 <nav class="header__menu">
                   <ul class="header__menu-list">
