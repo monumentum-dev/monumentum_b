@@ -1,37 +1,80 @@
 ---
 import { sanityClient } from "sanity:client";
 import Layout from '../layouts/Layout.astro';
-export interface PageOptionResponse {
-    _id: string;   
-    title: string;
+
+export interface PageResponse {
+  _id: string;
+  title: string;
+  description: string;
+  keywords: string[];
+  author: string;
+  ogImage: {
+    asset: {
+      url: string;
+    }
+  };
+  name: string;
+}
+
+
+const query = `*[_type == "pages" && name == "home"][0]{
+  _id,
+  title,
+  description,
+  keywords,
+  author,
+  name,
+  ogImage {
+    asset-> {
+      url
+    }
   }
+}`;
 
-const  query = '*[_type == "pages"][0]{ title }';
+const response = await sanityClient.fetch<PageResponse>(query);
 
-const response = await sanityClient.fetch<PageOptionResponse>(
-      query,
-     
-    );
-const title = response?.title || 'Default Title';
-console.log(title)
+if (!response) {
+  throw new Error('Home page not found in Sanity');
+}
 
+const {
+  title = 'Default Title',
+  description = 'Default Description',
+  keywords = [],
+  author = 'Default Author',
+  name = 'Default Name',
+  ogImage
+} = response || {};
+
+console.log('Page data:', response);
 ---
 
-<Layout title='Monumentum'>
-	<div class="container">
-		<div class="mx-auto max-w-md overflow-hidden rounded-xl bg-white shadow-md md:max-w-2xl">
-			<div class="md:flex">
-			  <div class="md:shrink-0">
-				<img
-				  class="h-48 w-full object-cover md:h-full md:w-48"
-				  src="https://res.cloudinary.com/dijj9tdzd/image/upload/v1740048563/cld-sample-2.jpg"
-				  alt="Stowarzyczenie"
-				/>
-			  </div>
-			  <div class="p-8">
-				<div class="text-sm font-semibold tracking-wide text-indigo-500 uppercase">MONUMENTUM</div>			
-			  </div>
-			</div>
-		  </div>
-		</div>
+<Layout 
+  title={title}
+  description={description}
+  keywords={keywords.join(', ')}
+  author={author}
+  ogImage={ogImage?.asset?.url}
+>
+  <div class="container">
+    <div class="mx-auto max-w-md overflow-hidden rounded-xl bg-white shadow-md md:max-w-2xl">
+      <div class="md:flex">
+        <div class="md:shrink-0">
+          <img
+            class="h-48 w-full object-cover md:h-full md:w-48"
+            src={ogImage?.asset?.url || "https://res.cloudinary.com/dijj9tdzd/image/upload/v1740048563/cld-sample-2.jpg"}
+            alt={name}
+          />
+        </div>
+        <div class="p-8">
+          <div class="text-sm font-semibold tracking-wide text-indigo-500 uppercase">
+            {name}
+          </div>
+          <p class="mt-2 text-gray-500">
+            {description}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
 </Layout>
