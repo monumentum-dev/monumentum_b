@@ -56,24 +56,7 @@ const {
   ogImage={ogImage?.asset?.url}
 >
   <div class="container">
-    <div class="mx-auto max-w-md overflow-hidden rounded-xl bg-white shadow-md md:max-w-2xl">
-      <div class="md:flex">
-        <div class="md:shrink-0 box">
-          <img
-            class="h-48 w-full object-cover md:h-full md:w-48"
-            src={ogImage?.asset?.url || "https://res.cloudinary.com/dijj9tdzd/image/upload/v1740048563/cld-sample-2.jpg"}
-            alt={name}
-          />
-        </div>
-        <div class="p-8">
-          <div class="text-sm font-semibold tracking-wide text-indigo-500 uppercase">
-            {name}
-          </div>
-          <p class="mt-2 text-gray-500">
-            {description}
-          </p>
-          <h1>Hello</h1>
-          <p>hello</p>
+          <h1>{title}</h1>
         </div>
       </div>
     </div>

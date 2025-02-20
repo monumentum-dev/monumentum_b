@@ -92,10 +92,10 @@ svg * {
 }
 
 a {
-  color: inherit;
+  color: var(--color-dark);
 
   @include hover {
-    color: var(--color-accent);
+    color: var(--color-gray-50);
   }
 
   &[class] {

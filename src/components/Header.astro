@@ -1,0 +1,96 @@
+---
+import { Image } from "astro:assets"
+import logo from "../assets/logo.png"
+---
+<header class="header">
+    <!-- <div class="header__promo">
+        <div class="header__promo-inner container">
+            <a class="header__promo-link" href="/">
+                <span class="icon icon--yellow-arrow">Dzieło Rąk Naszych Wspieraj</span>
+            </a>
+        </div>
+    </div> -->
+    <div class="header__body">
+        <div class="header__body-inner container">
+            <a 
+                class="header__logo logo"
+                href="/"
+                aria-label="Home"
+                title="Home"
+            >
+                <Image class="logo__image" src={logo} alt="logo" width={100} height={100} >
+                
+            </a>
+            <div class="header__overlay" data-js-header-overlay>
+                <nav class="header__menu">
+                  <ul class="header__menu-list">
+                    <li class="header__menu-item">
+                      <a class="header__menu-link is-active" href="./index.html">DOMOWA</a>
+                    </li>
+                    <li class="header__menu-item">
+                      <a class="header__menu-link" href="./proekty.html">PROEKTY</a>
+                    </li>
+                    <li class="header__menu-item">
+                      <a class="header__menu-link" href="./zespu.html">ZESPOL</a>
+                    </li>
+                    <li class="header__menu-item">
+                      <a class="header__menu-link" href="./KONTAKTY.html">KONTAKTY</a>
+                    </li>                    
+                  </ul>
+                </nav>              
+              </div>
+            <button
+            class="header__burger-button burger-button visible-mobile"
+            type="button"
+            aria-label="Open menu"
+            title="Open menu"
+            data-js-header-burger-button
+          >
+            <span class="burger-button__line"></span>
+            <span class="burger-button__line"></span>
+            <span class="burger-button__line"></span>
+          </button>
+        </div>   
+
+    </div>
+</header>
+
+<script> 
+
+class Header {
+  private burgerButton: HTMLElement | null;
+  private overlay: HTMLElement | null;
+
+  constructor(burgerSelector: string, overlaySelector: string) {
+    this.burgerButton = document.querySelector(burgerSelector);
+    this.overlay = document.querySelector(overlaySelector);
+    this.init();
+  }
+
+  private init(): void {
+    if (this.burgerButton && this.overlay) {
+      this.burgerButton.addEventListener('click', this.toggle.bind(this));
+    } else {
+      console.error('Элементы с указанными селекторами не найдены.');
+    }
+  }
+
+  private toggle(): void {
+    if (this.burgerButton && this.overlay) {
+      this.burgerButton.classList.toggle('is-active');
+      this.overlay.classList.toggle('is-active');
+
+      if (document.body.style.overflow === 'hidden') {
+        document.body.style.overflow = '';
+      } else {
+        document.body.style.overflow = 'hidden';
+      }
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  new Header('[data-js-header-burger-button]', '[data-js-header-overlay]');
+});
+
+</script>
