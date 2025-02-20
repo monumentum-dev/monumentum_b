@@ -1,0 +1,37 @@
+---
+import { sanityClient } from "sanity:client";
+import Layout from '../layouts/Layout.astro';
+export interface PageOptionResponse {
+    _id: string;   
+    title: string;
+  }
+
+const  query = '*[_type == "pages"][0]{ title }';
+
+const response = await sanityClient.fetch<PageOptionResponse>(
+      query,
+     
+    );
+const title = response?.title || 'Default Title';
+console.log(title)
+
+---
+
+<Layout title='Monumentum'>
+	<div class="container">
+		<div class="mx-auto max-w-md overflow-hidden rounded-xl bg-white shadow-md md:max-w-2xl">
+			<div class="md:flex">
+			  <div class="md:shrink-0">
+				<img
+				  class="h-48 w-full object-cover md:h-full md:w-48"
+				  src="https://res.cloudinary.com/dijj9tdzd/image/upload/v1740048563/cld-sample-2.jpg"
+				  alt="Stowarzyczenie"
+				/>
+			  </div>
+			  <div class="p-8">
+				<div class="text-sm font-semibold tracking-wide text-indigo-500 uppercase">MONUMENTUM</div>			
+			  </div>
+			</div>
+		  </div>
+		</div>
+</Layout>

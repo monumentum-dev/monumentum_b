@@ -1,0 +1,27 @@
+---
+import "../styles/global.css";
+import '../styles/main.scss';
+
+interface Props {
+  title: string;
+  
+}
+
+const { title } = Astro.props;
+---
+<!doctype html>
+<html lang="pl">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link href="/src/styles/main.scss" rel="stylesheet">
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
+
