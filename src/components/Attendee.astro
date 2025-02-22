@@ -3,20 +3,21 @@ import { Image } from "astro:assets";
 
 interface Props {
   name: string;
-  avatar: string;
+  photoUrl: string;
+  academicTitle?:string;
   altText?: string;
 }
 
-const { name, avatar, altText = `Avatar of ${name}` } = Astro.props;
+const { name, photoUrl, academicTitle, altText = `Avatar of ${name}` } = Astro.props;
 ---
 
 <div class="flex items-center">
   <img
     class="w-10 h-10 rounded-full mr-1"
-    src={avatar} 
+    src={photoUrl} 
     alt={altText} 
   />
   <div class="text-sm">
-    <p class="text-gray-900 leading-none">{name}</p>
+    <p class="text-gray-900 leading-none">{academicTitle?academicTitle+" ":""}{name}</p>
   </div>
 </div>

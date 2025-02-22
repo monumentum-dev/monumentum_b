@@ -1,11 +1,17 @@
 ---
+interface Member {
+  name: string;
+  academicTitle?: string;
+  photoUrl: string;
+}
+
 interface Props {
   title: string;
   date: string;
   description: string;
   backgroundImage: string;
   mapLink: string;
-  attendees: { name: string; avatar: string }[];
+  attendees: Member[];
   category: string;
 }
 
@@ -52,7 +58,7 @@ import MapLink from "./MapLink.astro";
         </div>
         <div class="flex gap-4 items-center">
           {attendees.map((attendee) => (
-            <Attendee name={attendee.name} avatar={attendee.avatar} />
+            <Attendee name={attendee.name} photoUrl={attendee.photoUrl} academicTitle={attendee.academicTitle} />
           ))}
         </div>
       </div>
