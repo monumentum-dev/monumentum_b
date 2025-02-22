@@ -51,6 +51,21 @@ import ShortlyCard from "./ShortlyCard.astro";
 //   },
 // ];
 
+const formatDate = (dateString:string) => {
+  const months = [
+    "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",
+    "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"
+  ];
+
+  const date = new Date(dateString);
+  const day = date.getDate().toString().padStart(2, '0'); // Двузначный день
+  const month = months[date.getMonth()]; // Название месяца
+  const hours = date.getHours().toString().padStart(2, '0'); // Двузначные часы
+  const minutes = date.getMinutes().toString().padStart(2, '0'); // Двузначные минуты
+
+  return `${month} ${day} ${hours}:${minutes}`;
+};
+
 interface Member {
   name: string;
   academicTitle?: string;
@@ -89,7 +104,7 @@ if (!response) {
 
 const events = response.map(event => ({
   title: event.title,
-  date: event.date,
+  date: formatDate(event.date),
   description: event.description,
   backgroundImage: event.backgroundImages[0], 
   mapLink: event.mapLink,
