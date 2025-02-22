@@ -1,53 +1,55 @@
 @use '../helpers' as *;
 
 .header {
-  position: sticky;
-  z-index: 100;
-  top: 0; 
-  animation-name: scrolling-header;
-  animation-fill-mode: both;
-  animation-timeline: scroll();
-  animation-range: rem(100) rem(200);
+  // position: sticky;
+  // z-index: 100;
+  // top: 0; 
+  // animation-name: scrolling-header;
+  // animation-fill-mode: both;
+  // animation-timeline: scroll();
+  // animation-range: rem(100) rem(200);
 
-  @keyframes scrolling-header {
-    to {
-      box-shadow: 0 0 1rem 0 var(--color-dark);
-    }
-  }
+  // @keyframes scrolling-header {
+  //   to {
+  //     box-shadow: 0 0 1rem 0 var(--color-dark);
+  //   }
+  // }
 
   &__promo {   
+    padding-block: rem(4);
     text-align: center;
     background-color: var(--color-accent);
-    font-size: fluid-text(14,12);
+    
     text-transform: uppercase;
     font-weight: 600;   
-    color: var(--color-dark);
-  
+    color: var(--color-dark);  
+
+    &-link{
+      font-size: fluid(24,14);
+    }
    
-    &-inner{
-        padding-block: rem(8);
+    &-inner{       
         border-bottom: var(--border);  
-            
     }
 
     @include mobile {
-      padding-block: rem(12);
+    
     }
 
     @include mobile-s {
-      font-size: rem(10);
+      font-size: rem(12);
     }
   
   }
 
   &__body {
-    padding-block: rem(14);
+    padding-block: rem(4);
     background-color: var(--color-accent);
     color: var(--color-dark);
     font-size: fluid-text(20,18);
 
     @include mobile {
-      padding-bottom: rem(13);
+    
     }
 
     &-inner {
@@ -105,9 +107,9 @@
     &-link {
       padding: rem(8) rem(24);
       color: var(--color-dark);
-      font-weight: 300;
+      font-weight: 600;
       &:hover{
-        color: var(--color-light);
+        color: var(--color-gray);
       }
 
       @include laptop {

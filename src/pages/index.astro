@@ -1,6 +1,10 @@
 ---
 import { sanityClient } from "sanity:client";
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+import Shortly from "../components/Shortly.astro";
+import Blog from "../components/Blog.astro";
+import Support from "../components/Support.astro";
+import Sponsors from "../components/Sponsors.astro";
 
 export interface PageResponse {
   _id: string;
@@ -11,11 +15,10 @@ export interface PageResponse {
   ogImage: {
     asset: {
       url: string;
-    }
+    };
   };
   name: string;
 }
-
 
 const query = `*[_type == "pages" && name == "home"][0]{
   _id,
@@ -34,31 +37,28 @@ const query = `*[_type == "pages" && name == "home"][0]{
 const response = await sanityClient.fetch<PageResponse>(query);
 
 if (!response) {
-  throw new Error('Home page not found in Sanity');
+  throw new Error("Home page not found in Sanity");
 }
 
 const {
-  title = 'Default Title',
-  description = 'Default Description',
+  title = "Default Title",
+  description = "Default Description",
   keywords = [],
-  author = 'Default Author',
-  name = 'Default Name',
-  ogImage
+  author = "Default Author",
+  name = "Default Name",
+  ogImage,
 } = response || {};
-
 ---
 
-<Layout 
+<Layout
   title={title}
   description={description}
-  keywords={keywords.join(', ')}
+  keywords={keywords.join(", ")}
   author={author}
   ogImage={ogImage?.asset?.url}
 >
-  <div class="container text-underline">
-          <h1>{title}</h1>
-        </div>
-      </div>
-    </div>
-  </div>
+  <Sponsors/>
+  <Shortly />
+  <Blog />
+  <Support/>
 </Layout>

@@ -57,7 +57,7 @@ h1, .h1 {
 }
 
 h2, .h2 {
-  @include fluid-text(48, 30);
+  @include fluid-text(26, 18);
   line-height: 1.3;
 }
 

@@ -1,102 +1,146 @@
 ---
-import { Image } from "astro:assets"
-import logo from "../assets/logo.png"
-import facebook from "../assets/icons/facebook.png"
+import { Image } from "astro:assets";
+import logo from "../assets/logo.png";
+import facebook from "../assets/icons/facebook.png";
+import phone from "../assets/icons/phone-call.png";
+import email from "../assets/icons/email.png";
 ---
+
 <header class="header">
-    <div class="header__promo">
-        <div class="header__promo-inner container">
-            <div class="header__promo-link">
-                <span >Stowarzyszenie na rzecz Rozwoju Badań Historycznych i Edukacji Monumentum</span>
-            </div>
-        </div>
+  <div class="header__promo">
+    <div class="header__promo-inner container">
+      <div class="header__promo-link">
+        <span
+          >Stowarzyszenie na rzecz Rozwoju Badań Historycznych i Edukacji <span
+            class="ml-4 tracking-widest">Monumentum</span
+          ></span
+        >
+      </div>
     </div>
-    <div class="header__body">
-        <div class="header__body-inner container">
-            <a 
-                class="header__logo logo"
-                href="/"
-                aria-label="Home"
-                title="Home"
-            >
-                <Image class="logo__image" src={logo} alt="logo" width={70} height={70} >
-                
-            </a>
-            <div>
-                <a href="https://www.facebook.com/profile.php?id=61556657347480" target="_blank" rel="noopener noreferrer">
-                  <Image class="logo__image" src={facebook} alt="Facebook logo" width={32} height={32} />
-                </a>
-              </div>
-            <div class="header__overlay" data-js-header-overlay>
-                <nav class="header__menu">
-                  <ul class="header__menu-list">
-                    <li class="header__menu-item">
-                      <a class="header__menu-link is-active" href="./index.html">DOMOWA</a>
-                    </li>
-                    <li class="header__menu-item">
-                      <a class="header__menu-link" href="./proekty.html">PROEKTY</a>
-                    </li>
-                    <li class="header__menu-item">
-                      <a class="header__menu-link" href="./zespu.html">ZESPOL</a>
-                    </li>
-                    <li class="header__menu-item">
-                      <a class="header__menu-link" href="./KONTAKTY.html">KONTAKTY</a>
-                    </li>                    
-                  </ul>
-                </nav>              
-              </div>
-            <button
-            class="header__burger-button burger-button visible-mobile"
-            type="button"
-            aria-label="Open menu"
-            title="Open menu"
-            data-js-header-burger-button
+  </div>
+  <div class="header__body">
+    <div class="header__body-inner container">
+      <a class="header__logo logo" href="/" aria-label="Home" title="Home">
+        <Image
+          class="logo__image"
+          src={logo}
+          alt="logo"
+          width={80}
+          height={80}
+        />
+      </a>
+      <div class="header__overlay" data-js-header-overlay>
+        <nav class="header__menu">
+          <ul class="header__menu-list">
+            <li class="header__menu-item">
+              <a class="header__menu-link is-active" href="./index.html"
+                >DOMOWA</a
+              >
+            </li>
+            <li class="header__menu-item">
+              <a class="header__menu-link" href="./proekty.html">PROJEKTY</a>
+            </li>
+            <li class="header__menu-item">
+              <a class="header__menu-link" href="./zespu.html">ZESPÓŁ</a>
+            </li>
+            <li class="header__menu-item">
+              <a class="header__menu-link" href="./KONTAKTY.html">KONTAKTY</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+        <div class="header__contact flex gap-2 items-center">
+          <a
+            href="https://www.facebook.com/profile.php?id=61556657347480"
+            target="_blank"
+            rel="noopener noreferrer"
           >
-            <span class="burger-button__line"></span>
-            <span class="burger-button__line"></span>
-            <span class="burger-button__line"></span>
-          </button>
-        </div>   
+            <Image
+              class=""
+              src={email}
+              alt="Facebook logo"
+              width={32}
+              height={32}
+            />
+          </a>
+          <a
+            href="https://www.facebook.com/profile.php?id=61556657347480"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              class=""
+              src={phone}
+              alt="Facebook logo"
+              width={32}
+              height={32}
+            />
+          </a>
+          <a
+            href="https://www.facebook.com/profile.php?id=61556657347480"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image
+              class=""
+              src={facebook}
+              alt="Facebook logo"
+              width={32}
+              height={32}
+            />
+          </a>
+        </div>
 
+        <button
+          class="header__burger-button burger-button visible-mobile"
+          type="button"
+          aria-label="Open menu"
+          title="Open menu"
+          data-js-header-burger-button
+        >
+          <span class="burger-button__line"></span>
+          <span class="burger-button__line"></span>
+          <span class="burger-button__line"></span>
+        </button>
+      
     </div>
-</header>
+  </div>
 
-<script> 
+  <script>
+    class Header {
+      private burgerButton: HTMLElement | null;
+      private overlay: HTMLElement | null;
 
-class Header {
-  private burgerButton: HTMLElement | null;
-  private overlay: HTMLElement | null;
+      constructor(burgerSelector: string, overlaySelector: string) {
+        this.burgerButton = document.querySelector(burgerSelector);
+        this.overlay = document.querySelector(overlaySelector);
+        this.init();
+      }
 
-  constructor(burgerSelector: string, overlaySelector: string) {
-    this.burgerButton = document.querySelector(burgerSelector);
-    this.overlay = document.querySelector(overlaySelector);
-    this.init();
-  }
+      private init(): void {
+        if (this.burgerButton && this.overlay) {
+          this.burgerButton.addEventListener("click", this.toggle.bind(this));
+        } else {
+          console.error("Элементы с указанными селекторами не найдены.");
+        }
+      }
 
-  private init(): void {
-    if (this.burgerButton && this.overlay) {
-      this.burgerButton.addEventListener('click', this.toggle.bind(this));
-    } else {
-      console.error('Элементы с указанными селекторами не найдены.');
-    }
-  }
+      private toggle(): void {
+        if (this.burgerButton && this.overlay) {
+          this.burgerButton.classList.toggle("is-active");
+          this.overlay.classList.toggle("is-active");
 
-  private toggle(): void {
-    if (this.burgerButton && this.overlay) {
-      this.burgerButton.classList.toggle('is-active');
-      this.overlay.classList.toggle('is-active');
-
-      if (document.body.style.overflow === 'hidden') {
-        document.body.style.overflow = '';
-      } else {
-        document.body.style.overflow = 'hidden';
+          if (document.body.style.overflow === "hidden") {
+            document.body.style.overflow = "";
+          } else {
+            document.body.style.overflow = "hidden";
+          }
+        }
       }
     }
-  }
-}
 
-document.addEventListener('DOMContentLoaded', () => {
-  new Header('[data-js-header-burger-button]', '[data-js-header-overlay]');
-});
-
-</script>
+    document.addEventListener("DOMContentLoaded", () => {
+      new Header("[data-js-header-burger-button]", "[data-js-header-overlay]");
+    });
+  </script>
+</header>

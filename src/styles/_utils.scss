@@ -4,6 +4,9 @@
   max-width: calc(var(--container-width) + var(--container-padding-x) * 2);
   margin-inline: auto;
   padding-inline: var(--container-padding-x); 
+  @include mobile {
+    padding-inline: rem(8); 
+  }
   // border: 2px solid sandybrown 
 }
 
@@ -96,8 +99,25 @@
 }
 
 .box { 
-  background: linear-gradient(to bottom, #ffffff, #f0f0f0);
+  background: linear-gradient(to bottom, #ffffff, #ffffff);
   border-radius: 10px;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3), 
               0 -6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.custom-title{
+  background-image: linear-gradient(to right, #8d9e9e, #695269, salmon);
+  background-clip: text;
+  color:transparent;
+}
+
+.custom-main-title{
+  background-image: linear-gradient(to right, #e5f5f5,#e5f5f5,#e5f5f5, #e79fe7);
+  background-clip: text;
+  color:transparent;
+ 
+}
+
+.category-background{
+  background-color: #e4a693a1;
 }

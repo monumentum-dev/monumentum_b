@@ -1,0 +1,61 @@
+---
+interface Props {
+  title: string;
+  date: string;
+  description: string;
+  backgroundImage: string;
+  mapLink: string;
+  attendees: { name: string; avatar: string }[];
+  category: string;
+}
+
+const {
+  title,
+  date,
+  description,
+  backgroundImage,
+  mapLink,
+  attendees,
+  category,
+} = Astro.props;
+
+import Attendee from "./Attendee.astro";
+import MapLink from "./MapLink.astro";
+---
+
+<div class="flex flex-wrap gap-4 justify-around bg-white box">
+    <div class="max-w-xs w-full lg:max-w-full lg:flex ">
+      <div
+        class="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden"
+        style={`background-image: url('${backgroundImage}')`}
+        title={title}
+      ></div>
+      <div class="bg-white rounded-b lg:rounded-r p-4 flex flex-col justify-between leading-normal">
+        <div class="mb-8">
+          <div class="flex items-center"> 
+            <div class="flex gap-4 items-center mb-4">
+              <p class="text-sm text-black flex items-center  uppercase tracking-widest px-4 category-background">
+                {category}
+              </p>
+              <div class="text-sm">
+                <p class="text-black underline">{date}</p>
+              </div>
+              <MapLink link={mapLink} />
+            </div>
+          </div>
+          <div class="text-gray-900 font-bold text-xl mb-2">
+            {title}
+          </div>
+          <p class="text-gray-700 text-base">
+            {description}
+          </p>
+        </div>
+        <div class="flex gap-4 items-center">
+          {attendees.map((attendee) => (
+            <Attendee name={attendee.name} avatar={attendee.avatar} />
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+ 

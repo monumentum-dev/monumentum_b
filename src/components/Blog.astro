@@ -1,0 +1,76 @@
+---
+const cards = [
+  {
+    imageUrl:
+      "https://res.cloudinary.com/dijj9tdzd/image/upload/v1740173435/465265245_572481942103855_1334538697473936879_n_cmecie.jpg",
+    title: "Lorem Ipsum is simply dummy text",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam...",
+    buttonText: "More Info",
+    buttonLink: "#",
+  },
+  {
+    imageUrl:
+      "https://res.cloudinary.com/dijj9tdzd/image/upload/v1740173457/468402540_3755141348084710_3924114165968806159_n_bp7ex9.jpg",
+    title: "Lorem Ipsum is simply dummy text",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam...",
+    buttonText: "More Info",
+    buttonLink: "#",
+  },
+  {
+    imageUrl:
+      "https://res.cloudinary.com/dijj9tdzd/image/upload/v1740173459/465727577_956403176523148_3494755361076022155_n_qa3rsp.jpg",
+    title: "Lorem Ipsum is simply dummy text",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam...",
+    buttonText: "More Info",
+    buttonLink: "#",
+  },
+  {
+    imageUrl:
+      "https://res.cloudinary.com/dijj9tdzd/image/upload/v1740204940/6_liv0ma.jpg",
+    title: "Lorem Ipsum is simply dummy text",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam...",
+    buttonText: "More Info",
+    buttonLink: "#",
+  },
+  {
+    imageUrl:
+      "https://res.cloudinary.com/dijj9tdzd/image/upload/v1740204692/konto_x4mmgt.jpg",
+    title: "Lorem Ipsum is simply dummy text",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam...",
+    buttonText: "More Info",
+    buttonLink: "#",
+  },
+  {
+    imageUrl:
+      "https://res.cloudinary.com/dijj9tdzd/image/upload/v1740204939/5_ugt9zu.jpg",
+    title: "Lorem Ipsum is simply dummy text",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam...",
+    buttonText: "More Info",
+    buttonLink: "#",
+  },
+];
+import BlogCard from "./BlogCard.astro";
+import H2Title from "./H2Title.astro";
+---
+
+<div class="container mt-[4rem]">
+  <H2Title text="działania na ułamkach" />
+  <div class="flex flex-wrap gap-4 justify-around ">
+    {
+      cards.map((card) => (
+        <BlogCard
+          imageUrl={card.imageUrl}
+          title={card.title}
+          description={card.description}
+          buttonLink={card.buttonLink}
+        />
+      ))
+    }
+  </div>
+</div>

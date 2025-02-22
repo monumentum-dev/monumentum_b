@@ -1,0 +1,69 @@
+---
+const events = [
+  {
+    title: "Zwiedzanie Kościóła farnego pw. Najświętszego Serca Pana Jezusa",
+    date: "Marzec 18",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.",
+    backgroundImage:
+      "https://res.cloudinary.com/dijj9tdzd/image/upload/v1740136994/Slice_2_m9qrgj.jpg",
+    mapLink: "https://maps.app.goo.gl/36ivPwh7qvHnKgxx6",
+    attendees: [
+      {
+        name: "Dr. Anna Polak",
+        avatar:
+          "https://res.cloudinary.com/dijj9tdzd/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1740132396/Anna_Polak_w8lyyv.jpg",
+      },
+      {
+        name: "Dr. Pawel Karp",
+        avatar:
+          "https://res.cloudinary.com/dijj9tdzd/image/upload/v1740136687/Pawe%C5%82_Karp_cpoj4w.jpg",
+      },
+    ],
+    category: "Zwiedzanie",
+  },
+  {
+    title: "Spotkanie z autorami ....",
+    date: "Maj 1",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus quia, nulla! Maiores et perferendis eaque, exercitationem praesentium nihil.",
+    backgroundImage:
+      "https://res.cloudinary.com/dijj9tdzd/image/upload/v1740150667/spodkanie_jppkrm.jpg",
+    mapLink: "https://maps.app.goo.gl/rYy9aT45Kw8vrip77",
+    attendees: [
+      {
+        name: "Dr. Anna Polak",
+        avatar:
+          "https://res.cloudinary.com/dijj9tdzd/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1740132396/Anna_Polak_w8lyyv.jpg",
+      },
+      {
+        name: "Dr. Pawel Karp",
+        avatar:
+          "https://res.cloudinary.com/dijj9tdzd/image/upload/v1740136687/Pawe%C5%82_Karp_cpoj4w.jpg",
+      },
+    ],
+    category: "spotkanie",
+  },
+];
+
+
+import H2Title from "./H2Title.astro";
+import ShortlyCard from "./ShortlyCard.astro";
+---
+
+<div class="container mt-[4rem]">   
+    <H2Title text = "nadchodzące zdarzenia"/>
+    <div class="flex flex-wrap gap-4 justify-around">
+        {events.map((event) => (
+            <ShortlyCard 
+              title={event.title} 
+              date={event.date} 
+              description={event.description} 
+              backgroundImage={event.backgroundImage} 
+              mapLink={event.mapLink} 
+              attendees={event.attendees} 
+              category={event.category} 
+            />
+          ))}
+</div>
+</div>

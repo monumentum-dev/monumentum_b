@@ -1,0 +1,10 @@
+---
+import { Image } from "astro:assets"
+import map from "../assets/icons/map.png"
+
+const {link} = Astro.props;
+---
+
+<a href={link} target="_blank" rel="noopener noreferrer">
+    <Image class="logo__image" src={map} alt="Google Map Link" width="32" height="32" />
+</a>
