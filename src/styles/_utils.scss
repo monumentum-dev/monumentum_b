@@ -105,6 +105,11 @@
               0 -6px 15px rgba(0, 0, 0, 0.2);
 }
 
+.box-bottom { 
+  background: var(--color-light); 
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Тень только снизу */
+}
+
 .custom-title{
   background-image: linear-gradient(to right, #8d9e9e, #695269, salmon);
   background-clip: text;
