@@ -1,0 +1,46 @@
+---
+import { Image } from "astro:assets";
+import logo from "../assets/logo.png";
+---
+
+<footer class="footer mt-[4rem]">
+    <div class="container ">
+        <div class="flex flex-col lg:flex-row gap-4 items-center lg:justify-between py-8">
+            <div>
+                <a
+                    class="header__logo logo"
+                    href="/"
+                    aria-label="Home"
+                    title="Home"
+                >
+                    <Image
+                        class="logo__image"
+                        src={logo}
+                        alt="logo"
+                        width={120}
+                        height={120}
+                    />
+                </a>
+            </div>
+
+            <div class="footer">
+                <ul class="footer__nav flex flex-col lg:flex-row gap-4 text-base">
+                    <li class="footer__nav-item ">
+                        <a href="/index.html" class="footer__nav-link"
+                            >© Stowarzyszenie na rzecz Rozwoju Badań
+                            Historycznych i Edukacji Monumentum</a
+                        >
+                    </li>
+                    <li class="footer__nav-item">
+                        <a href="/index.html" class="footer__nav-link"
+                            >realizacja: Igor Rak</a
+                        >
+                    </li>
+                    <li class="footer__nav-item">
+                        <a href="mailto:monumentum@xxx.com" class="footer__nav-link fm-bold font-semibold">monumentum@xxx.com</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
