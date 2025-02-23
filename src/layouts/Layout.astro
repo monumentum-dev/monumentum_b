@@ -1,9 +1,13 @@
 ---
+import { getImage } from 'astro:assets'
 import "../styles/global.css";
 import "../styles/main.scss";
 
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
+
+
+import faviconSrc from '../assets/logo.png';
 
 interface Props {
   title: string;
@@ -24,6 +28,7 @@ const {
   ogType = "website",
   canonicalUrl = Astro.url.href,
 } = Astro.props;
+
 ---
 
 <!doctype html>
@@ -33,6 +38,9 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta name="generator" content={Astro.generator} />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href={faviconSrc.src} type="image/svg+xml" />
     
     <!-- Basic SEO Meta Tags -->
     <title>{title}</title>
