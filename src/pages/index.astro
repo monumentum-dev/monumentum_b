@@ -59,8 +59,10 @@ const {
   author={author}
   ogImage={ogImage?.asset?.url}
 >
-  <Sponsors/>
+<div class="hidden md:block">
+  <Sponsors/></div>
   <Shortly />
   <Blog />
-  <Support/>
+  <Support/>  
+  <Sponsors/>
 </Layout>
