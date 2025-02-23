@@ -73,7 +73,7 @@ const {
 </html>
 
 <script>
-  class ActivePageHighlighter {
+ class ActivePageHighlighter {
   private pages: string[] = ["projekty", "o_nas", "kontakty"];
 
   constructor() {
@@ -82,10 +82,16 @@ const {
 
   private highlightActiveLink(): void {
     const currentPath = window.location.pathname;
-    const lastSegment = currentPath.split("/").filter(Boolean).pop();
+    const pathSegments = currentPath.split("/").filter(Boolean);
+    const lastSegment = pathSegments.pop();
     
+    if (pathSegments.includes("blog")) {
+      this.removeActiveLinks();
+      return; 
+    }
+
     if (!lastSegment || !this.pages.includes(lastSegment)) {
-      return; // Если главная страница или нет совпадения, ничего не делаем
+      return; 
     }
 
     const links = document.querySelectorAll<HTMLAnchorElement>(".header__menu-link");
@@ -98,8 +104,14 @@ const {
       }
     });
   }
+
+  private removeActiveLinks(): void {
+    const links = document.querySelectorAll<HTMLAnchorElement>(".header__menu-link");
+    links.forEach(link => link.classList.remove("is-active"));
+  }
 }
 
-// Инициализируем класс
+
 new ActivePageHighlighter();
+
 </script>
