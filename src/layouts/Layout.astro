@@ -72,3 +72,34 @@ const {
   </body>
 </html>
 
+<script>
+  class ActivePageHighlighter {
+  private pages: string[] = ["projekty", "o_nas", "kontakty"];
+
+  constructor() {
+    window.addEventListener("load", () => this.highlightActiveLink());
+  }
+
+  private highlightActiveLink(): void {
+    const currentPath = window.location.pathname;
+    const lastSegment = currentPath.split("/").filter(Boolean).pop();
+    
+    if (!lastSegment || !this.pages.includes(lastSegment)) {
+      return; // Если главная страница или нет совпадения, ничего не делаем
+    }
+
+    const links = document.querySelectorAll<HTMLAnchorElement>(".header__menu-link");
+    
+    links.forEach(link => {
+      if (link.id === lastSegment) {
+        link.classList.add("is-active");
+      } else {
+        link.classList.remove("is-active");
+      }
+    });
+  }
+}
+
+// Инициализируем класс
+new ActivePageHighlighter();
+</script>
