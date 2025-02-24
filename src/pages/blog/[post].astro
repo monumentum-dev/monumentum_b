@@ -19,6 +19,22 @@ export interface PageResponse {
     name: string;
 }
 
+const formatDate = (dateString:string) => {
+  const months = [
+    "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",
+    "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"
+  ];
+
+  const date = new Date(dateString);
+  const day = date.getDate().toString().padStart(2, '0'); // Двузначный день
+  const month = months[date.getMonth()]; // Название месяца
+  const year = date.getFullYear(); // Название месяца
+  const hours = date.getHours().toString().padStart(2, '0'); // Двузначные часы
+  const minutes = date.getMinutes().toString().padStart(2, '0'); // Двузначные минуты
+
+  return `${day} ${month} ${year}`;
+};
+
 const query = `*[_type == "pages" && name == "blog"][0]{
   _id,
   title,
@@ -39,6 +55,7 @@ if (!response) {
     throw new Error("PageResponse is fault");
 }
 
+
 const {
     title = "Default Title",
     description = "Default Description",
@@ -55,9 +72,8 @@ interface PostsResponse {
     };
     author?: {
         name: string;
-        image?: {
-            url: string;
-        };
+        photoUrl: string;
+        academicTitle: string;
     };
     publishedAt?: string;
     mainImage?: {
@@ -92,14 +108,13 @@ function findArticleBySlug(
     return articles.find((article) => article.slug.current === slug);
 }
 
-
-
 const postQuery = `*[_type == "blogPost"]{
   title,
   slug,
   author->{
     name,
-    image
+    academicTitle,
+    photoUrl
   },
   publishedAt,
   mainImage{
@@ -136,6 +151,7 @@ if (!post) {
 
 const foundArticle = findArticleBySlug(postsResponse, post);
 
+import Attendee from "../../components/Attendee.astro";
 ---
 
 <Layout
@@ -145,13 +161,34 @@ const foundArticle = findArticleBySlug(postsResponse, post);
     author={author}
     ogImage={ogImage?.asset?.url}
 >
-    <article>
-        <div class="container mt-[5rem] box">
-            <div class="mx-auto p-6 w-full bg-white shadow-lg rounded-lg">
-                <h2>{foundArticle?.title}</h2>
-                <img src={foundArticle?.mainImage?.url} alt="" />
-                <PortableText value={foundArticle?.content ?? []} />
+    <article class="container box mt-[4rem]  py-5">
+        <div class="mt-[2rem] ">
+            <h2 class="h1 text-center">{foundArticle?.title}</h2>
+            <p class="mx-auto lg:text-xl text-center lg:max-w-[50%]">{foundArticle?.excerpt}</p>
+            <div class=" mx-auto lg:max-w-2xl flex items-center justify-between py-2">                
+                <div class="text-sm ml-2">{formatDate(foundArticle?.publishedAt?foundArticle?.publishedAt:"")}</div>
+                <Attendee
+                    name={foundArticle?.author?.name
+                        ? foundArticle.author.name
+                        : ""}
+                    photoUrl={foundArticle?.author?.photoUrl
+                        ? foundArticle?.author?.photoUrl
+                        : ""}
+                    academicTitle={foundArticle?.author?.academicTitle}
+                />
             </div>
         </div>
+            <div class=" mt-[1rem] flex gap-3">
+                <img
+                    class="w-full lg:max-w-[30%] object-cover mx-auto box"
+                    src={foundArticle?.mainImage?.url}
+                    alt=""
+                />
+                <div class="">
+                    <PortableText value={foundArticle?.content ?? []} />
+                </div>
+            </div>
+            
+       
     </article>
 </Layout>
