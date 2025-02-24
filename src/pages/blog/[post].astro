@@ -1,0 +1,157 @@
+---
+export const prerender = false; // Not needed in 'server' mode
+import { sanityClient } from "sanity:client";
+import { PortableText } from "astro-portabletext";
+import Layout from "../../layouts/Layout.astro";
+import { Image } from "astro:assets";
+
+export interface PageResponse {
+    _id: string;
+    title: string;
+    description: string;
+    keywords: string[];
+    author: string;
+    ogImage: {
+        asset: {
+            url: string;
+        };
+    };
+    name: string;
+}
+
+const query = `*[_type == "pages" && name == "blog"][0]{
+  _id,
+  title,
+  description,
+  keywords,
+  author,
+  name,
+  ogImage {
+    asset-> {
+      url
+    }
+  }
+}`;
+
+const response = await sanityClient.fetch<PageResponse>(query);
+
+if (!response) {
+    throw new Error("PageResponse is fault");
+}
+
+const {
+    title = "Default Title",
+    description = "Default Description",
+    keywords = [],
+    author = "Default Author",
+    name = "Default Name",
+    ogImage,
+} = response || {};
+
+interface PostsResponse {
+    title: string;
+    slug: {
+        current: string;
+    };
+    author?: {
+        name: string;
+        image?: {
+            url: string;
+        };
+    };
+    publishedAt?: string;
+    mainImage?: {
+        url: string;
+    };
+    gallery?: {
+        url: string;
+    }[];
+    photoUrl?: string[];
+    excerpt?: string;
+    content?: Array<
+        | {
+              _type: "block";
+              children: Array<{ text: string }>;
+          }
+        | {
+              _type: "image";
+              url: string;
+          }
+    >;
+    seo?: {
+        metaTitle?: string;
+        metaDescription?: string;
+        keywords?: string[];
+    };
+}
+
+function findArticleBySlug(
+    articles: PostsResponse[],
+    slug: string,
+): PostsResponse | undefined {
+    return articles.find((article) => article.slug.current === slug);
+}
+
+
+
+const postQuery = `*[_type == "blogPost"]{
+  title,
+  slug,
+  author->{
+    name,
+    image
+  },
+  publishedAt,
+  mainImage{
+    "url": asset->url
+  },
+  gallery[]{
+    "url": asset->url
+  },
+  photoUrl,
+  excerpt,
+  content[]{
+    ...,
+    _type == "image" => {
+      "url": asset->url
+    }
+  },
+  seo{
+    metaTitle,
+    metaDescription,
+    keywords
+  }
+} | order(publishedAt desc)
+`;
+const post = Astro.params.post;
+const postsResponse = await sanityClient.fetch<PostsResponse[]>(postQuery);
+
+if (!response) {
+    throw new Error("PostsResponse");
+}
+
+if (!post) {
+    throw new Error("Post is fault");
+}
+
+const foundArticle = findArticleBySlug(postsResponse, post);
+
+---
+
+<Layout
+    title={title}
+    description={description}
+    keywords={keywords.join(", ")}
+    author={author}
+    ogImage={ogImage?.asset?.url}
+>
+    <article>
+        <div class="container mt-[5rem] box">
+            <div class="mx-auto p-6 w-full bg-white shadow-lg rounded-lg">
+                <h2>{foundArticle?.title}</h2>
+                <img src={foundArticle?.mainImage?.url} alt="" />
+                <PortableText value={foundArticle?.content ?? []} />
+            </div>
+        </div>
+    </article>
+</Layout>
