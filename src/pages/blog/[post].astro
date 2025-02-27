@@ -70,7 +70,7 @@ interface PostsResponse {
     slug: {
         current: string;
     };
-    author?: {
+    attendee?: {
         name: string;
         photoUrl: string;
         academicTitle: string;
@@ -111,7 +111,7 @@ function findArticleBySlug(
 const postQuery = `*[_type == "blogPost"]{
   title,
   slug,
-  author->{
+  attendee->{
     name,
     academicTitle,
     photoUrl
@@ -150,6 +150,7 @@ if (!post) {
 }
 
 const foundArticle = findArticleBySlug(postsResponse, post);
+console.log(foundArticle)
 
 import Attendee from "../../components/Attendee.astro";
 ---
@@ -168,17 +169,17 @@ import Attendee from "../../components/Attendee.astro";
             <div class=" mx-auto lg:max-w-2xl flex items-center justify-between py-2">                
                 <div class="text-sm ml-2">{formatDate(foundArticle?.publishedAt?foundArticle?.publishedAt:"")}</div>
                 <Attendee
-                    name={foundArticle?.author?.name
-                        ? foundArticle.author.name
+                    name={foundArticle?.attendee?.name
+                        ? foundArticle.attendee.name
                         : ""}
-                    photoUrl={foundArticle?.author?.photoUrl
-                        ? foundArticle?.author?.photoUrl
+                    photoUrl={foundArticle?.attendee?.photoUrl
+                        ? foundArticle?.attendee?.photoUrl
                         : ""}
-                    academicTitle={foundArticle?.author?.academicTitle}
+                    academicTitle={foundArticle?.attendee?.academicTitle}
                 />
             </div>
         </div>
-            <div class=" mt-[1rem] flex gap-3">
+            <div class=" mt-[1rem] flex flex-col-reverse lg:flex-row gap-8">
                 <img
                     class="w-full lg:max-w-[30%] object-cover mx-auto box"
                     src={foundArticle?.mainImage?.url}
