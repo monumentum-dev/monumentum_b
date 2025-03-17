@@ -1,93 +1,77 @@
 ---
 import H2Title from "./H2Title.astro";
+import { sanityClient } from "sanity:client";
+import Swiper from "./Swiper.astro";
 
-const images = [
-  {
-    src: "https://res.cloudinary.com/dijj9tdzd/image/upload/v1742106639/D%C5%82u%C5%BCek_r7jtff.jpg",
-    title: "Dłuzek",
-    description:
-      "Wspaniały opis Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. ",
-  },
-  {
-    src: "https://res.cloudinary.com/dijj9tdzd/image/upload/v1742106668/%C5%BBary_blzh7h.jpg",
-    title: "Image 2",
-    description:
-      "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.  2",
-  },
-  {
-    src: "https://res.cloudinary.com/dijj9tdzd/image/upload/v1742106666/Wschowa_siumrw.jpg",
-    title: "Image 3",
-    description:
-      "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.  3",
-  },
-  {
-    src: "https://res.cloudinary.com/dijj9tdzd/image/upload/v1742106662/Strzeg%C3%B3w_fntb2b.jpg",
-    title: "Image 4",
-    description:
-      "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.  4",
-  },
-  {
-    src: "https://res.cloudinary.com/dijj9tdzd/image/upload/v1742106645/Chlebowo_nixikn.jpg",
-    title: "Chlebowo",
-    description:
-      "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.  5",
-  },
-  {
-    src: "https://res.cloudinary.com/dijj9tdzd/image/upload/v1742106658/Relikty_w_%C5%BCarskiej_farze_cdbhgv.jpg",
-    title: "Image 6",
-    description:
-      "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.  6",
-  },
-  {
-    src: "https://res.cloudinary.com/dijj9tdzd/image/upload/v1742106657/S%C4%99kowice_nnevej.jpg",
-    title: "Image 7",
-    description:
-      "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.  7",
-  },
-  {
-    src: "https://res.cloudinary.com/dijj9tdzd/image/upload/v1742106654/Pa%C5%82ac_w_Brodach_kxkp1l.jpg",
-    title: "Image 8",
-    description:
-      "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.  8",
-  },
-].slice(0, 8);
+
+interface ImageData {
+  src: string;
+  title: string;
+  description: string;
+  top: boolean;
+}
+
+interface GalleryData {
+  title: string;
+  images: ImageData[];
+}
+
+const query = `*[_type == "grid"][0]{
+  title, 
+  images[]{
+    src,
+    title,
+    description,
+     top
+  }
+}`;
+
+const gallerie: GalleryData = await sanityClient.fetch(query);
+const { title, images } = gallerie;
+const sortedImages = images.sort((a, b) => Number(b.top) - Number(a.top));
+const cut = sortedImages.slice(0, 8);
 ---
 
 <div class="container my-[4rem]">
-  <H2Title text="grafika prac" />
-  <div class="flex gap-8" data-js-grid>
+  <H2Title text={title} />
+  <div class="lg:hidden">
+  <Swiper />
+
+</div>
+  </div>
+  <div class="hidden lg:flex gap-8" data-js-grid>
     <div class="flex">
       <div class="w-[821px] h-[470px] flex flex-col gap-2">
         <!-- Верхний ряд -->
         <div class="flex gap-2 h-[359px]">
           <!-- Первая колонка -->
           <img
-            src={images[0].src}
-            alt={images[0].title}
+            src={cut[0].src}
+            alt={cut[0].title}
             class="w-[542px] h-[359px] rounded-md object-cover object-center"
             data-js-grid-image
-            data-js-title={images[0].title}
-            data-js-description={images[0].description}
+            data-js-title={cut[0].title}
+            data-js-description={cut[0].description}
             data-index="0"
           />
           <!-- Вторая колонка -->
           <div class="flex flex-col gap-2">
             <img
-              src={images[1].src}
-              alt={images[1].title}
+              src={cut[1].src}
+              alt={cut[1].title}
               class="w-[271px] h-[175px] rounded-md object-cover object-center grid-border cursor-pointer"
               data-js-grid-image
-              data-js-title={images[1].title}
-              data-js-description={images[1].description}
+              data-js-title={cut[1].title}
+              data-js-description={cut[1].description}
               data-index="1"
             />
             <img
-              src={images[2].src}
-              alt={images[2].title}
+              src={cut[2].src}
+              alt={cut[2].title}
               class="w-[271px] h-[175px] rounded-md object-cover object-center grid-border cursor-pointer"
               data-js-grid-image
-              data-js-title={images[2].title}
-              data-js-description={images[2].description}
+              data-js-title={cut[2].title}
+              data-js-description={cut[2].description}
               data-index="2"
             />
           </div>
@@ -95,7 +79,7 @@ const images = [
         <!-- Нижний ряд -->
         <div class="flex gap-2 h-[103px]">
           {
-            images
+            cut
               .slice(3, 8)
               .map((image, index) => (
                 <img
@@ -115,207 +99,212 @@ const images = [
 
     <div>
       <img
-        src={images[0].src}
-        alt={images[0].title}
+        src={cut[0].src}
+        alt={cut[0].title}
         class="w-[406px] h-[262px] rounded-md object-cover cursor-pointer"
         data-js-active-image
       />
-      <h5 data-js-active-title>{images[0].title}</h5>
+      <h5 data-js-active-title>{cut[0].title}</h5>
       <p class="text-base" data-js-active-description>
-        {images[0].description}
+        {cut[0].description}
       </p>
     </div>
   </div>
+  {
+    images.length > 8 && (
+      <div class="hidden lg:flex justify-center my-4">
+        <button
+          class="max-w-max mt-auto inline-flex items-center px-3 py-2 text-normal font-bold text-center text-black rounded-lg hover:bg-red-400 focus:ring-4 focus:outline-none focus:ring-red-400 category-background cursor-pointer"
+          data-js-open-modal
+        >
+          +{images.length - 8} zdjęć
+          <svg
+            class="rtl:rotate-180 w-3.5 h-3.5 ms-2"
+            aria-hidden="true"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 14 10"
+          >
+            <path
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M1 5h12m0 0L9 1m4 4L9 9"
+            />
+          </svg>
+        </button>
+      </div>
+    )
+  }
 </div>
+<div
+  class="hidden fixed top-0 inset-x-0 h-full bg-black bg-opacity-50  items-center justify-center z-50"
+  data-js-modal
+>
+  <button class="absolute top-4 right-4  font-bold text-white text-7xl cursor-pointer" data-js-close-modal
+    >&times;</button
+  >
+  <div class="absolute top-4 mx-96">
+    <div class="my-5 columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+      {images.map((image, index) => (
+        <img
+          src={image.src}
+          alt={image.title}
+          class="w-full rounded-lg shadow-lg  object-cover"
+        />
+      ))}
+    </div>
+  </div>
+</div>
+
 <script>
   class ImageGrid {
-  private images: { index: number; src: string; title: string; description: string }[] = [];
+    private images: {
+      index: number;
+      src: string;
+      title: string;
+      description: string;
+    }[] = [];
+    private activeImage: HTMLImageElement | null = null;
+    private activeTitle: HTMLElement | null = null;
+    private activeDescription: HTMLElement | null = null;
+
+    constructor() {
+      const gridElement = document.querySelector("[data-js-grid]");
+      if (!gridElement) return;
+
+      this.activeImage = document.querySelector("[data-js-active-image]");
+      this.activeTitle = document.querySelector("[data-js-active-title]");
+      this.activeDescription = document.querySelector(
+        "[data-js-active-description]",
+      );
+
+      const imageElements = Array.from(
+        gridElement.querySelectorAll("[data-js-grid-image]"),
+      ) as HTMLImageElement[];
+
+      imageElements.forEach((imageElement, i) => {
+        const index = Number(imageElement.getAttribute("data-index"));
+        const src = imageElement.getAttribute("src") || "";
+        const title = imageElement.getAttribute("data-js-title") || "";
+        const description =
+          imageElement.getAttribute("data-js-description") || "";
+
+        this.images.push({ index, src, title, description });
+
+        imageElement.addEventListener("click", () =>
+          this.swapImages(i, imageElements),
+        );
+      });
+    }
+
+    private swapImages(index: number, imageElements: HTMLImageElement[]) {
+      if (index === 0) return;
+
+      const firstImageElement = imageElements[0];
+      const clickedImageElement = imageElements[index];
+
+      // Сохраняем данные перед перестановкой
+      const tempSrc = firstImageElement.src;
+      const tempAlt = firstImageElement.alt;
+      const tempTitle = firstImageElement.dataset.jsTitle;
+      const tempDescription = firstImageElement.dataset.jsDescription;
+
+      // Меняем src и атрибуты местами
+      firstImageElement.src = clickedImageElement.src;
+      firstImageElement.alt = clickedImageElement.alt;
+      firstImageElement.dataset.jsTitle =
+        clickedImageElement.dataset.jsTitle || "";
+      firstImageElement.dataset.jsDescription =
+        clickedImageElement.dataset.jsDescription || "";
+
+      clickedImageElement.src = tempSrc;
+      clickedImageElement.alt = tempAlt;
+      clickedImageElement.dataset.jsTitle = tempTitle || "";
+      clickedImageElement.dataset.jsDescription = tempDescription || "";
+
+      // Обновляем активное изображение, заголовок и описание
+      if (this.activeImage && this.activeTitle && this.activeDescription) {
+        this.activeImage.src = firstImageElement.src;
+        this.activeImage.alt = firstImageElement.alt;
+        this.activeTitle.textContent = firstImageElement.dataset.jsTitle || "";
+        this.activeDescription.textContent =
+          firstImageElement.dataset.jsDescription || "";
+      }
+
+      // Добавляем плавность
+      firstImageElement.style.transition = "transform 0.2s";
+      clickedImageElement.style.transition = "transform 0.2s";
+      firstImageElement.style.transform = "scale(1.02)";
+      clickedImageElement.style.transform = "scale(1.02)";
+
+      setTimeout(() => {
+        firstImageElement.style.transform = "";
+        clickedImageElement.style.transform = "";
+      }, 200);
+    }
+  }
+
+  // Инициализация класса после загрузки DOM
+  document.addEventListener("DOMContentLoaded", () => new ImageGrid());
+  class Modal{
+    private images: { index: number; src: string; title: string; description: string }[] = [];
   private activeImage: HTMLImageElement | null = null;
   private activeTitle: HTMLElement | null = null;
   private activeDescription: HTMLElement | null = null;
+  private modal: HTMLElement | null = null;
+  private openModalBtn: HTMLElement | null = null;
+  private closeModalBtn: HTMLElement | null = null;
 
   constructor() {
-    const gridElement = document.querySelector('[data-js-grid]');
+    const gridElement = document.querySelector("[data-js-grid]");
     if (!gridElement) return;
 
-    this.activeImage = document.querySelector('[data-js-active-image]');
-    this.activeTitle = document.querySelector('[data-js-active-title]');
-    this.activeDescription = document.querySelector('[data-js-active-description]');
+    this.activeImage = document.querySelector("[data-js-active-image]");
+    this.activeTitle = document.querySelector("[data-js-active-title]");
+    this.activeDescription = document.querySelector("[data-js-active-description]");
+    this.modal = document.querySelector("[data-js-modal]");
+    this.openModalBtn = document.querySelector("[data-js-open-modal]");
+    this.closeModalBtn = document.querySelector("[data-js-close-modal]");
 
-    const imageElements = Array.from(gridElement.querySelectorAll('[data-js-grid-image]')) as HTMLImageElement[];
-    
+    const imageElements = Array.from(gridElement.querySelectorAll("[data-js-grid-image]")) as HTMLImageElement[];
     imageElements.forEach((imageElement, i) => {
-      const index = Number(imageElement.getAttribute('data-index'));
-      const src = imageElement.getAttribute('src') || '';
-      const title = imageElement.getAttribute('data-js-title') || '';
-      const description = imageElement.getAttribute('data-js-description') || '';
-      
-      this.images.push({ index, src, title, description });
-      
-      imageElement.addEventListener('click', () => this.swapImages(i, imageElements));
-    });
-  }
+      const index = Number(imageElement.getAttribute("data-index"));
+      const src = imageElement.getAttribute("src") || "";
+      const title = imageElement.getAttribute("data-js-title") || "";
+      const description = imageElement.getAttribute("data-js-description") || "";
 
-  private swapImages(index: number, imageElements: HTMLImageElement[]) {
-    if (index === 0) return;
-    
-    const firstImageElement = imageElements[0];
-    const clickedImageElement = imageElements[index];
-    
-    // Сохраняем данные перед перестановкой
-    const tempSrc = firstImageElement.src;
-    const tempAlt = firstImageElement.alt;
-    const tempTitle = firstImageElement.dataset.jsTitle;
-    const tempDescription = firstImageElement.dataset.jsDescription;
-    
-    // Меняем src и атрибуты местами
-    firstImageElement.src = clickedImageElement.src;
-    firstImageElement.alt = clickedImageElement.alt;
-    firstImageElement.dataset.jsTitle = clickedImageElement.dataset.jsTitle || '';
-    firstImageElement.dataset.jsDescription = clickedImageElement.dataset.jsDescription || '';
-    
-    clickedImageElement.src = tempSrc;
-    clickedImageElement.alt = tempAlt;
-    clickedImageElement.dataset.jsTitle = tempTitle || '';
-    clickedImageElement.dataset.jsDescription = tempDescription || '';
-    
-    // Обновляем активное изображение, заголовок и описание
-    if (this.activeImage && this.activeTitle && this.activeDescription) {
-      this.activeImage.src = firstImageElement.src;
-      this.activeImage.alt = firstImageElement.alt;
-      this.activeTitle.textContent = firstImageElement.dataset.jsTitle || '';
-      this.activeDescription.textContent = firstImageElement.dataset.jsDescription || '';
+      this.images.push({ index, src, title, description });
+   
+    });
+
+    if (this.openModalBtn && this.modal) {
+      this.openModalBtn.addEventListener("click", () => this.openModal());
     }
 
-    // Добавляем плавность
-    firstImageElement.style.transition = 'transform 0.2s';
-    clickedImageElement.style.transition = 'transform 0.2s';
-    firstImageElement.style.transform = 'scale(1.02)';
-    clickedImageElement.style.transform = 'scale(1.02)';
-    
-    setTimeout(() => {
-      firstImageElement.style.transform = '';
-      clickedImageElement.style.transform = '';
-    }, 200);
+    if (this.closeModalBtn && this.modal) {
+      this.closeModalBtn.addEventListener("click", () => this.closeModal());
+    }
+  }
+
+  private openModal() {
+    if (this.modal) {
+      this.modal.classList.remove("hidden");
+      this.modal.classList.add("flex");
+      this.modal.classList.add("overflow-auto");
+      document.body.style.overflow = "hidden";
+    }
+  }
+
+  private closeModal() {
+    if (this.modal) {
+      this.modal.classList.remove("flex", "overflow-auto");
+      this.modal.classList.add("hidden");
+      document.body.style.overflow = "";
+    }
   }
 }
 
-// Инициализация класса после загрузки DOM
-document.addEventListener('DOMContentLoaded', () => new ImageGrid());
-//   class ImageGrid {
-//   private images: { index: number; src: string; title: string; description: string }[] = [];
-//   private activeImage: HTMLImageElement | null = null;
-//   private activeTitle: HTMLElement | null = null;
-//   private activeDescription: HTMLElement | null = null;
-
-//   constructor() {
-//     const gridElement = document.querySelector('[data-js-grid]');
-//     if (!gridElement) return;
-
-//     this.activeImage = document.querySelector('[data-js-active-image]');
-//     this.activeTitle = document.querySelector('[data-js-active-title]');
-//     this.activeDescription = document.querySelector('[data-js-active-description]');
-
-//     const imageElements = Array.from(gridElement.querySelectorAll('[data-js-grid-image]')) as HTMLImageElement[];
-    
-//     imageElements.forEach((imageElement, i) => {
-//       const index = Number(imageElement.getAttribute('data-index'));
-//       const src = imageElement.getAttribute('src') || '';
-//       const title = imageElement.getAttribute('data-js-title') || '';
-//       const description = imageElement.getAttribute('data-js-description') || '';
-      
-//       this.images.push({ index, src, title, description });
-      
-//       imageElement.addEventListener('click', () => this.swapImages(i, imageElements));
-//     });
-//   }
-
-//   private swapImages(index: number, imageElements: HTMLImageElement[]) {
-//     if (index === 0) return;
-    
-//     const firstImageElement = imageElements[0];
-//     const clickedImageElement = imageElements[index];
-    
-//     // Меняем src и атрибуты местами
-//     [firstImageElement.src, clickedImageElement.src] = [clickedImageElement.src, firstImageElement.src];
-//     [firstImageElement.alt, clickedImageElement.alt] = [clickedImageElement.alt, firstImageElement.alt];
-//     [firstImageElement.dataset.jsTitle, clickedImageElement.dataset.jsTitle] = [clickedImageElement.dataset.jsTitle, firstImageElement.dataset.jsTitle];
-//     [firstImageElement.dataset.jsDescription, clickedImageElement.dataset.jsDescription] = [clickedImageElement.dataset.jsDescription, firstImageElement.dataset.jsDescription];
-    
-//     // Добавляем плавность
-//     firstImageElement.style.transition = 'transform 0.2s';
-//     clickedImageElement.style.transition = 'transform 0.2s';
-//     firstImageElement.style.transform = 'scale(1.05)';
-//     clickedImageElement.style.transform = 'scale(1.05)';
-    
-//     setTimeout(() => {
-//       firstImageElement.style.transform = '';
-//       clickedImageElement.style.transform = '';
-//     }, 200);
-//   }
-// }
-
-// // Инициализация класса после загрузки DOM
-// document.addEventListener('DOMContentLoaded', () => new ImageGrid());
-
-  // class ImageGrid {
-  //   private images: {
-  //     index: number;
-  //     src: string;
-  //     title: string;
-  //     description: string;
-  //   }[] = [];
-  //   private activeImage: HTMLImageElement | null = null;
-  //   private activeTitle: HTMLElement | null = null;
-  //   private activeDescription: HTMLElement | null = null;
-
-  //   constructor() {
-  //     const gridElement = document.querySelector("[data-js-grid]");
-  //     if (!gridElement) return;
-
-  //     this.activeImage = document.querySelector("[data-js-active-image]");
-  //     this.activeTitle = document.querySelector("[data-js-active-title]");
-  //     this.activeDescription = document.querySelector(
-  //       "[data-js-active-description]",
-  //     );
-
-  //     const imageElements = gridElement.querySelectorAll(
-  //       "[data-js-grid-image]",
-  //     );
-  //     imageElements.forEach((imageElement, i) => {
-  //       if (i > 0) {
-  //         const index = Number(imageElement.getAttribute("data-index"));
-  //         const src = imageElement.getAttribute("src") || "";
-  //         const title = imageElement.getAttribute("data-js-title") || "";
-  //         const description =
-  //           imageElement.getAttribute("data-js-description") || "";
-
-  //         this.images.push({ index, src, title, description });
-
-  //         imageElement.addEventListener("click", () =>
-  //           this.setActiveImage(index),
-  //         );
-  //       }
-  //     });
-  //   }
-
-  //   private setActiveImage(index: number) {
-  //     const image = this.images.find((img) => img.index === index);
-  //     if (
-  //       !image ||
-  //       !this.activeImage ||
-  //       !this.activeTitle ||
-  //       !this.activeDescription
-  //     )
-  //       return;
-
-  //     this.activeImage.src = image.src;
-  //     this.activeImage.alt = image.title;
-  //     this.activeTitle.textContent = image.title;
-  //     this.activeDescription.textContent = image.description;
-  //   }
-  // }
-
-  // // Инициализация класса после загрузки DOM
-  // document.addEventListener("DOMContentLoaded", () => new ImageGrid());
+document.addEventListener("DOMContentLoaded", () => new Modal());
 </script>
