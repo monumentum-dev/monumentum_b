@@ -79,8 +79,10 @@ interface PostsResponse {
     mainImage?: {
         url: string;
     };
-    gallery?: {
-        url: string;
+    images?: {
+        src: string;
+        title: string;
+        description: string;
     }[];
     photoUrl?: string[];
     excerpt?: string;
@@ -120,8 +122,12 @@ const postQuery = `*[_type == "blogPost"]{
   mainImage{
     "url": asset->url
   },
-  gallery[]{
-    "url": asset->url
+  images[]->{
+    _id,
+    src,
+    title,
+    description,
+    top
   },
   photoUrl,
   excerpt,
@@ -153,6 +159,7 @@ const foundArticle = findArticleBySlug(postsResponse, post);
 console.log(foundArticle)
 
 import Attendee from "../../components/Attendee.astro";
+import ImageShowcase from "../../components/ImageShowcase.astro";
 ---
 
 <Layout
@@ -189,7 +196,7 @@ import Attendee from "../../components/Attendee.astro";
                     <PortableText value={foundArticle?.content ?? []} />
                 </div>
             </div>
-            
+           {foundArticle?.images && <ImageShowcase images={foundArticle?.images ?? []} />}            
        
     </article>
 </Layout>

@@ -8,6 +8,7 @@ import Blog from "../components/Blog.astro";
 import Support from "../components/Support.astro";
 import Sponsors from "../components/Sponsors.astro";
 import ImageShowcase from "../components/ImageShowcase.astro";
+import type { GalleryData } from "../types";
 
 export interface PageResponse {
   _id: string;
@@ -51,6 +52,23 @@ const {
   name = "Default Name",
   ogImage,
 } = response || {};
+
+
+
+const gridQuery = `*[_type == "grid"][0]{
+  _id,
+  title,
+  images[]->{
+    _id,
+    src,
+    title,
+    description,
+    top
+  }
+}`;
+
+const gallerie: GalleryData = await sanityClient.fetch(gridQuery);
+const { gridTitle, images } = gallerie;
 ---
 
 <Layout
@@ -64,7 +82,7 @@ const {
   <Sponsors/></div>
   <Shortly />
   <Blog />
-  <ImageShowcase />
+  <ImageShowcase gridTitle={gridTitle} images={images} />
   <Support/>  
   <Sponsors/>
 </Layout>

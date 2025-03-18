@@ -1,45 +1,21 @@
 ---
 import H2Title from "./H2Title.astro";
-import { sanityClient } from "sanity:client";
 import Swiper from "./Swiper.astro";
+import type { GalleryData } from "../types";
 
+// Access props passed to the component
+const { gridTitle, images } = Astro.props as GalleryData;
 
-interface ImageData {
-  src: string;
-  title: string;
-  description: string;
-  top: boolean;
-}
-
-interface GalleryData {
-  title: string;
-  images: ImageData[];
-}
-
-const query = `*[_type == "grid"][0]{
-  _id,
-  title,
-  images[]->{
-    _id,
-    src,
-    title,
-    description,
-    top
-  }
-}`;
-
-const gallerie: GalleryData = await sanityClient.fetch(query);
-const { title, images } = gallerie;
+// Sort and slice the images
 const sortedImages = images.sort((a, b) => Number(b.top) - Number(a.top));
 const cut = sortedImages.slice(0, 8);
 ---
 
 <div class="container my-[4rem]">
-  <H2Title text={title} />
+  {gridTitle&&<H2Title text={gridTitle} />}
   <div class="lg:hidden">
     <Swiper images={sortedImages} />
-</div>
-  
+</div>  
   <div class="hidden lg:flex gap-8" data-js-grid>
     <div class="flex">
       <div class="w-[821px] h-[470px] flex flex-col gap-2">
