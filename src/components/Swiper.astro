@@ -1,43 +1,31 @@
 ---
-import { sanityClient } from "sanity:client";
-// 1. Импортируем CSS Swiper
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+
 
 interface ImageData {
   src: string;
   title: string;
   description: string;
-  top: boolean;
 }
 
-interface GalleryData {
-  title: string;
-  images: ImageData[];
-}
-
-const query = `*[_type == "grid"][0]{
-  title, 
-  images[]{
-    src,
-    title,
-    description,
-     top
-  }
-}`;
-
-const gallerie: GalleryData = await sanityClient.fetch(query);
-const { images } = gallerie;
-const sortedImages = images.sort((a, b) => Number(b.top) - Number(a.top));
+const { images } = Astro.props; // Accepting images as a prop
 ---
 
 <!-- 2. HTML-структура -->
 <div class="swiper">
   <div class="swiper-wrapper">
     <!-- Слайды -->
-     {sortedImages.map((image) => (<div class="swiper-slide"><img  class="w-[542px] h-[359px]  rounded-md object-cover object-center " src={image.src} alt={image.title}/></div>))}
-       
+    {images.map((image: ImageData) => (
+      <div class="swiper-slide">
+        <img  
+          class="w-[542px] h-[359px] rounded-md object-cover object-center" 
+          src={image.src} 
+          alt={image.title}
+        />
+      </div>
+    ))}
     
   </div>
 

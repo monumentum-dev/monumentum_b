@@ -17,12 +17,14 @@ interface GalleryData {
 }
 
 const query = `*[_type == "grid"][0]{
-  title, 
-  images[]{
+  _id,
+  title,
+  images[]->{
+    _id,
     src,
     title,
     description,
-     top
+    top
   }
 }`;
 
@@ -35,8 +37,7 @@ const cut = sortedImages.slice(0, 8);
 <div class="container my-[4rem]">
   <H2Title text={title} />
   <div class="lg:hidden">
-  <Swiper />
-
+    <Swiper images={sortedImages} />
 </div>
   
   <div class="hidden lg:flex gap-8" data-js-grid>
@@ -114,7 +115,7 @@ const cut = sortedImages.slice(0, 8);
     images.length > 8 && (
       <div class="hidden lg:flex justify-center my-4">
         <button
-          class="max-w-max mt-auto inline-flex items-center px-3 py-2 text-normal font-bold text-center text-black rounded-lg hover:bg-red-400 focus:ring-4 focus:outline-none focus:ring-red-400 category-background"
+          class="max-w-max mt-auto inline-flex items-center px-3 py-2 text-normal font-bold text-center text-black rounded-lg hover:bg-red-400 focus:ring-4 focus:outline-none focus:ring-red-400 category-background cursor-pointer"
           data-js-open-modal
         >
           +{images.length - 8} zdjęć
@@ -123,7 +124,7 @@ const cut = sortedImages.slice(0, 8);
             aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
-            viewBox="0 0 14 10"
+            viewBox="0 0 14 10" 
           >
             <path
               stroke="currentColor"
