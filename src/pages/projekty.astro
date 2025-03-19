@@ -1,28 +1,23 @@
 ---
 import { sanityClient } from "sanity:client";
 import Layout from "../layouts/Layout.astro";
+import { PortableText } from "astro-portabletext";
+import type { PageResponse } from "../types";
 
-export interface PageResponse {
-    _id: string;
-    title: string;
-    description: string;
-    keywords: string[];
-    author: string;
-    ogImage: {
-        asset: {
-            url: string;
-        };
-    };
-    name: string;
-}
-
-const query = `*[_type == "pages" && name == "projekty"][0]{
+// Query for the "projekty" page
+const pageQuery = `*[_type == "pages" && name == "projekty"][0]{
   _id,
   title,
   description,
   keywords,
   author,
   name,
+   content[] {
+    ...,
+    _type == "image" => {
+      "url": asset->url
+    }
+  },
   ogImage {
     asset-> {
       url
@@ -30,7 +25,20 @@ const query = `*[_type == "pages" && name == "projekty"][0]{
   }
 }`;
 
-const response = await sanityClient.fetch<PageResponse>(query);
+// Query to fetch project slugs, titles, and images
+const projectsQuery = `*[_type == "project"]{
+  title,
+  "slug": slug.current,
+  mainImage{
+      asset->{url}
+    },
+}`;
+
+// Fetch the "projekty" page data
+const response = await sanityClient.fetch<PageResponse>(pageQuery);
+
+// Fetch projects list
+const projects = await sanityClient.fetch<{ title: string; slug: string; mainImage?: { asset?: { url: string } } }[]>(projectsQuery);
 
 if (!response) {
     throw new Error("Home page not found in Sanity");
@@ -43,6 +51,7 @@ const {
     author = "Default Author",
     name = "Default Name",
     ogImage,
+    content,
 } = response || {};
 ---
 
@@ -53,9 +62,25 @@ const {
     author={author}
     ogImage={ogImage?.asset?.url}
 >
-    <div class="container mt-[5rem] box">
+    <div class="container mt-[5rem]">
+      {projects.length === 0 ? (
         <div class="mx-auto p-6 w-full bg-white shadow-lg rounded-lg">
-            Ta strona jest nadal w fazie budowania.
+          <PortableText value={content ?? []} />            
         </div>
+      ) : (
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
+          {projects.map((project) => (
+            <div class="box rounded-lg">
+              {project.mainImage?.asset?.url && (
+                <img src={project.mainImage.asset.url} alt={project.title} class="w-full h-48 object-cover rounded-lg" />
+              )}
+              <div class="p-4">
+                <h2 class="text-xl font-semibold mb-2">{project.title}</h2>
+                <a href={`/projekt/${project.slug}`} class="text-blue-600 hover:underline">Zobacz więcej</a>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
 </Layout>

@@ -12,8 +12,20 @@ const cut = sortedImages.slice(0, 8);
 ---
 
 <div class="container my-[4rem]">
-  {gridTitle&&<H2Title text={gridTitle} />}
-  <div class="lg:hidden">
+  {gridTitle && <H2Title text={gridTitle} />}
+  {images.length === 0 && <p>Brak zdjęć</p>}
+  {images.length < 8 ? (
+    // <div class="grid grid-cols-2 gap-4">
+    //   {images.map((image) => (
+    //     <img
+    //       src={image.src}
+    //       alt={image.title}
+    //       class="w-full h-[400px] object-cover object-center rounded-md"
+    //     />
+    //   ))}
+    // </div>
+    <Swiper images={sortedImages} />
+  ) : (<div class="lg:hidden">
     <Swiper images={sortedImages} />
 </div>  
   <div class="hidden lg:flex gap-8" data-js-grid>
@@ -86,7 +98,8 @@ const cut = sortedImages.slice(0, 8);
         {cut[0].description}
       </p>
     </div>
-  </div>
+  </div>)}
+  
   {
     images.length > 8 && (
       <div class="hidden lg:flex justify-center my-4">

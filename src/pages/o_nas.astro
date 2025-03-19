@@ -1,20 +1,10 @@
 ---
 import { sanityClient } from "sanity:client";
 import Layout from "../layouts/Layout.astro";
+import { PortableText } from "astro-portabletext";
+import type { PageResponse } from "../types";
 
-export interface PageResponse {
-    _id: string;
-    title: string;
-    description: string;
-    keywords: string[];
-    author: string;
-    ogImage: {
-        asset: {
-            url: string;
-        };
-    };
-    name: string;
-}
+
 
 const query = `*[_type == "pages" && name == "o_nas"][0]{
   _id,
@@ -23,6 +13,12 @@ const query = `*[_type == "pages" && name == "o_nas"][0]{
   keywords,
   author,
   name,
+   content[]{
+    ...,
+    _type == "image" => {
+      "url": asset->url
+    }
+  },
   ogImage {
     asset-> {
       url
@@ -43,6 +39,7 @@ const {
     author = "Default Author",
     name = "Default Name",
     ogImage,
+    content,
 } = response || {};
 ---
 
@@ -55,7 +52,7 @@ const {
 >
     <div class="container mt-[5rem] box">
         <div class="mx-auto p-6 w-full bg-white shadow-lg rounded-lg">
-            Ta strona jest nadal w fazie budowania.
-        </div>
+            {content?<PortableText value={content ?? []} />:"Strona jest w trakcie tworzenia"}
+        </div>         
     </div>
 </Layout>

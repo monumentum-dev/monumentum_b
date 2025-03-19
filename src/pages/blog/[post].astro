@@ -1,23 +1,16 @@
 ---
 export const prerender = false; // Not needed in 'server' mode
+
 import { sanityClient } from "sanity:client";
 import { PortableText } from "astro-portabletext";
-import Layout from "../../layouts/Layout.astro";
-import { Image } from "astro:assets";
 
-export interface PageResponse {
-    _id: string;
-    title: string;
-    description: string;
-    keywords: string[];
-    author: string;
-    ogImage: {
-        asset: {
-            url: string;
-        };
-    };
-    name: string;
-}
+import Layout from "../../layouts/Layout.astro";
+import Attendee from "../../components/Attendee.astro";
+import ImageShowcase from "../../components/ImageShowcase.astro";
+
+import type { PageResponse } from "../../types";
+
+
 
 const formatDate = (dateString:string) => {
   const months = [
@@ -29,8 +22,8 @@ const formatDate = (dateString:string) => {
   const day = date.getDate().toString().padStart(2, '0'); // Двузначный день
   const month = months[date.getMonth()]; // Название месяца
   const year = date.getFullYear(); // Название месяца
-  const hours = date.getHours().toString().padStart(2, '0'); // Двузначные часы
-  const minutes = date.getMinutes().toString().padStart(2, '0'); // Двузначные минуты
+//   const hours = date.getHours().toString().padStart(2, '0'); 
+//   const minutes = date.getMinutes().toString().padStart(2, '0');
 
   return `${day} ${month} ${year}`;
 };
@@ -156,10 +149,9 @@ if (!post) {
 }
 
 const foundArticle = findArticleBySlug(postsResponse, post);
-console.log(foundArticle)
 
-import Attendee from "../../components/Attendee.astro";
-import ImageShowcase from "../../components/ImageShowcase.astro";
+
+
 ---
 
 <Layout

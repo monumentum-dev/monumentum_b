@@ -2,13 +2,7 @@
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-
-
-interface ImageData {
-  src: string;
-  title: string;
-  description: string;
-}
+import type {ImageData} from "../types";
 
 const { images } = Astro.props; // Accepting images as a prop
 ---
@@ -21,12 +15,12 @@ const { images } = Astro.props; // Accepting images as a prop
       <div class="swiper-slide">
         <div class="flex flex-col items-center justify-center">       
           <img  
-          class="w-[542px] h-[359px] rounded-md object-cover object-center" 
+          class="w-[542px] h-[374px] rounded-md object-cover object-center" 
           src={image.src} 
           alt={image.title}
         />
-         <p class="text-xl text-bold">{image.title}</p>
-         <p class="text-sm">{image.description}</p>
+         {image.title&&<p class="text-xl text-bold">{image.title}</p>}
+         {image.description&&<p class="text-sm">{image.description}</p>}
         </div>
         
       </div>
@@ -63,7 +57,7 @@ const { images } = Astro.props; // Accepting images as a prop
 <style>
   .swiper {
     width: 100%;
-    height: 374px;
+    min-height: 374px;
   }
   .swiper-slide {
     display: flex;

@@ -1,0 +1,135 @@
+---
+export const prerender = false;
+import { sanityClient } from "sanity:client";
+import { PortableText } from "astro-portabletext";
+
+import Layout from "../../layouts/Layout.astro";
+import ImageShowcase from "../../components/ImageShowcase.astro";
+
+// Get project slug from URL
+const { projekt } = Astro.params;
+
+const formatDate = (dateString:string) => {
+  const months = [
+    "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",
+    "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"
+  ];
+
+  const date = new Date(dateString);
+  const day = date.getDate().toString().padStart(2, '0'); // Двузначный день
+  const month = months[date.getMonth()]; // Название месяца
+  const year = date.getFullYear(); // Название месяца
+//   const hours = date.getHours().toString().padStart(2, '0'); 
+//   const minutes = date.getMinutes().toString().padStart(2, '0');
+
+  return `${day} ${month} ${year}`;
+};
+
+// Define TypeScript interface for project
+interface Project {
+  title: string;
+  slug: string;
+  author: string;
+  startDate: string;
+  endDate: string;
+  funding: string[];
+  mainImage?: {
+    asset?: {
+      url: string;
+    };
+  };
+  excerpt: string;
+  content: any[];
+  images?: {
+        src: string;
+        title: string;
+        description: string;
+        top: boolean;
+    }[];
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    keywords?: string[];
+  };
+}
+
+// Define the query for a single project
+const projectQuery = `
+  *[_type == "project" && slug.current == $slug][0]{
+    title,
+    "slug": slug.current,
+    author,
+    startDate,
+    endDate,
+    funding,
+    mainImage{
+      asset->{url}
+    },
+    excerpt,
+    content,
+     images[]->{
+    _id,
+    src,
+    title,
+    description,
+    top
+  },
+    seo{
+      metaTitle,
+      metaDescription,
+      keywords
+    }
+  }
+`;
+
+// Fetch project data from Sanity with type assertion
+const projectData = await sanityClient.fetch<Project>(projectQuery, { slug: projekt });
+    console.log(projectData);
+
+// Ensure safe default values
+const {
+  title = "Default Title",
+  seo = {},
+  author = "Unknown Author",
+  startDate = "N/A",
+  endDate = "N/A",
+  funding = [],
+  mainImage = undefined,
+  excerpt = "No excerpt available",
+  content = [],
+  images = []
+} = projectData || {};
+---
+
+<Layout
+  title={title}
+  description={seo.metaDescription || ""}
+  keywords={seo.keywords?.join(", ") || ""}
+  author={author}
+  ogImage={mainImage?.asset?.url || ""}
+>
+  <div class="container mt-10">
+    <h1 class="text-4xl font-bold mb-4">{title}</h1>
+    <p class="text-gray-600">Autor: {author}</p>
+    <p class="text-gray-600">Start: {formatDate(startDate)}</p>
+    <p class="text-gray-600">Zakończenie: {formatDate(endDate)}</p>
+    <p class="text-gray-600">Źródła finansowania: {funding.length > 0 ? funding.join(", ") : "Brak"}</p>
+
+    {mainImage?.asset?.url && (
+      <img src={mainImage.asset.url} alt={title} class="w-full rounded-lg mt-4" />
+    )}
+
+    <p class="mt-4 text-lg">{excerpt}</p>
+
+    <div class="content mt-6">
+      <PortableText value={content} />
+    </div>
+
+    {images.length > 0 && (
+      
+        <ImageShowcase images={images?? []} />
+       
+    
+    )}
+  </div>
+</Layout>
