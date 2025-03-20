@@ -8,113 +8,87 @@ import Layout from "../../layouts/Layout.astro";
 import Attendee from "../../components/Attendee.astro";
 import ImageShowcase from "../../components/ImageShowcase.astro";
 
-import type { PageResponse } from "../../types";
+// Get project slug from URL
+const { post } = Astro.params;
 
-
-
-const formatDate = (dateString:string) => {
+const formatDate = (dateString: string) => {
   const months = [
-    "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",
-    "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"
+    "Styczeń",
+    "Luty",
+    "Marzec",
+    "Kwiecień",
+    "Maj",
+    "Czerwiec",
+    "Lipiec",
+    "Sierpień",
+    "Wrzesień",
+    "Październik",
+    "Listopad",
+    "Grudzień",
   ];
 
   const date = new Date(dateString);
-  const day = date.getDate().toString().padStart(2, '0'); // Двузначный день
+  const day = date.getDate().toString().padStart(2, "0"); // Двузначный день
   const month = months[date.getMonth()]; // Название месяца
   const year = date.getFullYear(); // Название месяца
-//   const hours = date.getHours().toString().padStart(2, '0'); 
-//   const minutes = date.getMinutes().toString().padStart(2, '0');
-
   return `${day} ${month} ${year}`;
 };
 
-const query = `*[_type == "pages" && name == "blog"][0]{
-  _id,
-  title,
-  description,
-  keywords,
-  author,
-  name,
-  ogImage {
-    asset-> {
-      url
-    }
-  }
-}`;
-
-const response = await sanityClient.fetch<PageResponse>(query);
-
-if (!response) {
-    throw new Error("PageResponse is fault");
-}
-
-
-const {
-    title = "Default Title",
-    description = "Default Description",
-    keywords = [],
-    author = "Default Author",
-    name = "Default Name",
-    ogImage,
-} = response || {};
-
 interface PostsResponse {
+  title: string;
+  slug: string;
+  author: string;
+  mainImage?: {
+    asset?: {
+      url: string;
+    };
+  };
+  attendee?: {
+    name: string;
+    photoUrl: string;
+    academicTitle: string;
+  };
+  publishedAt?: string;
+
+  images?: {
+    src: string;
     title: string;
-    slug: {
-        current: string;
-    };
-    attendee?: {
-        name: string;
-        photoUrl: string;
-        academicTitle: string;
-    };
-    publishedAt?: string;
-    mainImage?: {
+    description: string;
+  }[];
+  photoUrl?: string[];
+  excerpt?: string;
+  content?: Array<
+    | {
+        _type: "block";
+        children: Array<{ text: string }>;
+      }
+    | {
+        _type: "image";
         url: string;
-    };
-    images?: {
-        src: string;
-        title: string;
-        description: string;
-    }[];
-    photoUrl?: string[];
-    excerpt?: string;
-    content?: Array<
-        | {
-              _type: "block";
-              children: Array<{ text: string }>;
-          }
-        | {
-              _type: "image";
-              url: string;
-          }
-    >;
-    seo?: {
-        metaTitle?: string;
-        metaDescription?: string;
-        keywords?: string[];
-    };
+      }
+  >;
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    keywords?: string[];
+  };
 }
 
-function findArticleBySlug(
-    articles: PostsResponse[],
-    slug: string,
-): PostsResponse | undefined {
-    return articles.find((article) => article.slug.current === slug);
-}
-
-const postQuery = `*[_type == "blogPost"]{
+const postQuery = `*[_type == "blogPost" && slug.current == $slug][0] {
   title,
   slug,
   attendee->{
+    _id,
     name,
     academicTitle,
-    photoUrl
+    photoUrl,  
   },
   publishedAt,
-  mainImage{
-    "url": asset->url
-  },
+ mainImage{
+      asset->{url}
+    },
+  excerpt,
+  content,
   images[]->{
     _id,
     src,
@@ -122,73 +96,65 @@ const postQuery = `*[_type == "blogPost"]{
     description,
     top
   },
-  photoUrl,
-  excerpt,
-  content[]{
-    ...,
-    _type == "image" => {
-      "url": asset->url
-    }
-  },
-  seo{
+  seo {
     metaTitle,
     metaDescription,
     keywords
   }
-} | order(publishedAt desc)
+}
 `;
-const post = Astro.params.post;
-const postsResponse = await sanityClient.fetch<PostsResponse[]>(postQuery);
 
-if (!response) {
-    throw new Error("PostsResponse");
-}
-
-if (!post) {
-    throw new Error("Post is fault");
-}
-
-const foundArticle = findArticleBySlug(postsResponse, post);
+const postsResponse = await sanityClient.fetch<PostsResponse>(postQuery, {
+  slug: post,
+});
 
 
-
+// Get project slug from URL
+const {
+  title = "Default Title",
+  seo = {},
+  author = "Unknown Author",
+  mainImage = undefined,
+  excerpt = "No excerpt available",
+  content = [],
+  images = [],
+  publishedAt = "",
+} = postsResponse || {};
 ---
 
 <Layout
-    title={title}
-    description={description}
-    keywords={keywords.join(", ")}
-    author={author}
-    ogImage={ogImage?.asset?.url}
+  title={title}
+  description={seo.metaDescription || ""}
+  keywords={seo.keywords?.join(", ") || ""}
+  author={author}
+  ogImage={mainImage?.asset?.url || ""}
 >
-    <article class="container box mt-[4rem]  py-5">
-        <div class="mt-[2rem] ">
-            <h2 class="h1 text-center">{foundArticle?.title}</h2>
-            <p class="mx-auto lg:text-xl text-center lg:max-w-[50%]">{foundArticle?.excerpt}</p>
-            <div class=" mx-auto lg:max-w-2xl flex items-center justify-between py-2">                
-                <div class="text-sm ml-2">{formatDate(foundArticle?.publishedAt?foundArticle?.publishedAt:"")}</div>
-                <Attendee
-                    name={foundArticle?.attendee?.name
-                        ? foundArticle.attendee.name
-                        : ""}
-                    photoUrl={foundArticle?.attendee?.photoUrl
-                        ? foundArticle?.attendee?.photoUrl
-                        : ""}
-                    academicTitle={foundArticle?.attendee?.academicTitle}
-                />
-            </div>
-        </div>
-            <div class=" mt-[1rem] flex flex-col-reverse lg:flex-row gap-8">
-                <img
-                    class="w-full lg:max-w-[30%] object-cover mx-auto box"
-                    src={foundArticle?.mainImage?.url}
-                    alt=""
-                />
-                <div class="">
-                    <PortableText value={foundArticle?.content ?? []} />
-                </div>
-            </div>
-           {foundArticle?.images && <ImageShowcase images={foundArticle?.images ?? []} />}            
-       
-    </article>
+  <article class="container">
+    <div class="my-4">
+      <h2 class="text-center">{title}</h2>
+      <p class="text-center">{excerpt}</p>
+    </div>
+    <div class="flex justify-between items-center my-4">
+      <div>{formatDate(publishedAt)}</div>
+      <Attendee
+        name={postsResponse?.attendee?.name ? postsResponse.attendee.name : ""}
+        photoUrl={postsResponse?.attendee?.photoUrl
+          ? postsResponse?.attendee?.photoUrl
+          : ""}
+        academicTitle={postsResponse?.attendee?.academicTitle}
+      />
+    </div>
+    <div class="flex gap-4">
+      {
+        mainImage?.asset?.url && (
+          <img src={mainImage.asset.url} alt={title} class="w-[50%]" />
+        )
+      }
+      <div class="">
+        <PortableText value={content ?? []} />
+      </div>
+    </div>
+    {images.length > 0 && <ImageShowcase images={images ?? []} />}
+  </article>
+  
 </Layout>

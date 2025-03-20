@@ -13,7 +13,7 @@ const { imageUrl, title, description, buttonLink } = Astro.props;
   <div
     class="max-w-xs lg:min-w-sm bg-white rounded-lg box flex flex-col h-full"
   >
-    <a href={`/blog/${buttonLink}/`}>
+    <a href={`/blog/${buttonLink}`}>
       <img
         class="rounded-t-lg w-full h-48 object-cover"
         src={imageUrl}
@@ -21,7 +21,7 @@ const { imageUrl, title, description, buttonLink } = Astro.props;
       />
     </a>
     <div class="p-5 flex flex-col flex-grow">
-      <a href={`/blog/${buttonLink}/`}>
+      <a href={`/blog/${buttonLink}`}>
         <div class="mb-5 text-xl font-bold text-gray-900">{title}</div>
       </a>
 
@@ -30,7 +30,7 @@ const { imageUrl, title, description, buttonLink } = Astro.props;
       </p>
 
       <a
-        href={`/blog/${buttonLink}/`}
+        href={`/blog/${buttonLink}`}
         class="max-w-max mt-auto inline-flex items-center px-3 py-2 text-base font-bold text-center text-white rounded-lg hover:bg-red-400 focus:ring-4 focus:outline-none focus:ring-red-400 category-background"
       >
         Więcej Informacji
