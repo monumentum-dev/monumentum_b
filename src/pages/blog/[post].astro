@@ -7,6 +7,7 @@ import { PortableText } from "astro-portabletext";
 import Layout from "../../layouts/Layout.astro";
 import Attendee from "../../components/Attendee.astro";
 import ImageShowcase from "../../components/ImageShowcase.astro";
+import type { Member } from "../../types";
 
 // Get project slug from URL
 const { post } = Astro.params;
@@ -43,11 +44,7 @@ interface PostsResponse {
       url: string;
     };
   };
-  attendee?: {
-    name: string;
-    photoUrl: string;
-    academicTitle: string;
-  };
+  attendee?: Member;
   publishedAt?: string;
 
   images?: {
@@ -137,6 +134,7 @@ const {
     <div class="flex justify-between items-center my-4">
       <div>{formatDate(publishedAt)}</div>
       <Attendee
+        slug={postsResponse?.attendee?.slug ? postsResponse.attendee.slug: ""}
         name={postsResponse?.attendee?.name ? postsResponse.attendee.name : ""}
         photoUrl={postsResponse?.attendee?.photoUrl
           ? postsResponse?.attendee?.photoUrl

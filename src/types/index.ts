@@ -33,3 +33,26 @@ export interface ImageData {
     };
     name: string;
 }
+
+export interface ContactInfo {
+  phone: string;
+  email: string;
+  facebook: string;
+}
+
+export interface Member {
+  name: string;
+  slug: string;
+  academicTitle?: string;
+  photoUrl: string;
+  bio: string;
+  researchAreas?: string[];
+  contactEmail?: string;
+  publications?: string[];
+  socialLinks?: { platform: string; url: string }[];
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    keywords?: string[];
+  };
+}

@@ -9,21 +9,21 @@ const { gridTitle, images } = Astro.props as GalleryData;
 // Sort and slice the images
 const sortedImages = images.sort((a, b) => Number(b.top) - Number(a.top));
 const cut = sortedImages.slice(0, 8);
+const getPolishPhotoText = (count:number) => {
+  if (count === 1) {
+    return `+1 zdjęcie`;
+  } else if (count >= 2 && count <= 4) {
+    return `+${count} zdjęcia`;
+  } else {
+    return `+${count} zdjęć`;
+  }
+};
 ---
 
 <div class="container my-[4rem]">
   {gridTitle && <H2Title text={gridTitle} />}
   {images.length === 0 && <p>Brak zdjęć</p>}
   {images.length < 8 ? (
-    // <div class="grid grid-cols-2 gap-4">
-    //   {images.map((image) => (
-    //     <img
-    //       src={image.src}
-    //       alt={image.title}
-    //       class="w-full h-[400px] object-cover object-center rounded-md"
-    //     />
-    //   ))}
-    // </div>
     <Swiper images={sortedImages} />
   ) : (<div class="lg:hidden">
     <Swiper images={sortedImages} />
@@ -107,7 +107,7 @@ const cut = sortedImages.slice(0, 8);
           class="max-w-max mt-auto inline-flex items-center px-3 py-2 text-normal font-bold text-center text-black rounded-lg hover:bg-red-400 focus:ring-4 focus:outline-none focus:ring-red-400 category-background cursor-pointer"
           data-js-open-modal
         >
-          +{images.length - 8} zdjęć
+          {getPolishPhotoText(images.length - 8)}
           <svg
             class="rtl:rotate-180 w-3.5 h-3.5 ms-2"
             aria-hidden="true"
@@ -128,25 +128,36 @@ const cut = sortedImages.slice(0, 8);
     )
   }
 </div>
-<div
-  class="hidden fixed top-0 inset-x-0 h-full bg-black bg-opacity-50  items-center justify-center z-50"
-  data-js-modal
->
-  <button class="absolute top-4 right-4  font-bold text-white text-7xl cursor-pointer" data-js-close-modal
-    >&times;</button
-  >
-  <div class="absolute top-4 mx-96">
-    <div class="my-5 columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+
+
+
+ <div class="fixed inset-0 hidden bg-black/75  items-center justify-center z-50" data-js-modal>
+ 
+  <button class="absolute top-4 right-6 text-white text-4xl font-light hover:text-gray-300 transition-colors cursor-pointer" data-js-close-modal>&times;</button>
+  
+ 
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-y-auto max-h-screen py-12">
+ 
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {images.map((image, index) => (
-        <img
-          src={image.src}
-          alt={image.title}
-          class="w-full rounded-lg shadow-lg  object-cover"
-        />
+        <div class="group rounded-xl overflow-hidden shadow-xl transform transition duration-300 hover:scale-105 hover:shadow-2xl">
+          <img
+            src={image.src}
+            alt={image.title || `Gallery image ${index + 1}`}
+            class="w-full h-64 object-cover"
+          />
+          {image.title && (
+            <div class="p-3 bg-white bg-opacity-90 text-gray-800">
+              <h3 class="font-medium">{image.title}</h3>
+              {image.description && <p class="text-sm text-gray-600">{image.description}</p>}
+            </div>
+          )}
+        </div>
       ))}
     </div>
   </div>
-</div>
+</div> 
+
 
 <script>
   class ImageGrid {
@@ -238,14 +249,16 @@ const cut = sortedImages.slice(0, 8);
 
   // Инициализация класса после загрузки DOM
   document.addEventListener("DOMContentLoaded", () => new ImageGrid());
-  class Modal{
-    private images: { index: number; src: string; title: string; description: string }[] = [];
+
+  class Modal {
+  private images: { index: number; src: string; title: string; description: string }[] = [];
   private activeImage: HTMLImageElement | null = null;
   private activeTitle: HTMLElement | null = null;
   private activeDescription: HTMLElement | null = null;
   private modal: HTMLElement | null = null;
   private openModalBtn: HTMLElement | null = null;
   private closeModalBtn: HTMLElement | null = null;
+  private modalOverlay: HTMLElement | null = null;
 
   constructor() {
     const gridElement = document.querySelector("[data-js-grid]");
@@ -257,6 +270,10 @@ const cut = sortedImages.slice(0, 8);
     this.modal = document.querySelector("[data-js-modal]");
     this.openModalBtn = document.querySelector("[data-js-open-modal]");
     this.closeModalBtn = document.querySelector("[data-js-close-modal]");
+    
+    // Get the modal overlay (background) for click detection
+    // We'll use the modal itself for this purpose, but we'll check the target
+    this.modalOverlay = this.modal;
 
     const imageElements = Array.from(gridElement.querySelectorAll("[data-js-grid-image]")) as HTMLImageElement[];
     imageElements.forEach((imageElement, i) => {
@@ -266,7 +283,6 @@ const cut = sortedImages.slice(0, 8);
       const description = imageElement.getAttribute("data-js-description") || "";
 
       this.images.push({ index, src, title, description });
-   
     });
 
     if (this.openModalBtn && this.modal) {
@@ -275,6 +291,28 @@ const cut = sortedImages.slice(0, 8);
 
     if (this.closeModalBtn && this.modal) {
       this.closeModalBtn.addEventListener("click", () => this.closeModal());
+    }
+
+    // Add ESC key press listener
+    document.addEventListener("keydown", (e) => this.handleKeyDown(e));
+
+    // Add background click listener
+    if (this.modal) {
+      this.modal.addEventListener("click", (e) => this.handleBackgroundClick(e));
+    }
+  }
+
+  private handleKeyDown(e: KeyboardEvent) {
+    // Close modal on ESC key press
+    if (e.key === "Escape" || e.key === "Esc") {
+      this.closeModal();
+    }
+  }
+
+  private handleBackgroundClick(e: MouseEvent) {
+    // Close only if clicking directly on the modal background (not its children)
+    if (e.target === this.modal) {
+      this.closeModal();
     }
   }
 
@@ -297,4 +335,5 @@ const cut = sortedImages.slice(0, 8);
 }
 
 document.addEventListener("DOMContentLoaded", () => new Modal());
+
 </script>

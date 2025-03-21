@@ -1,0 +1,118 @@
+---
+export const prerender = false;
+import Layout from "../../layouts/Layout.astro";
+import type { Member } from "../../types";
+import { sanityClient } from "sanity:client";
+
+// Fetch the member data based on the slug
+const { member } = Astro.params;
+
+const query = `*[_type == "members" && slug.current == $slug][0]{
+  name,
+  slug,
+  academicTitle,
+  photoUrl,
+  bio,
+  researchAreas,
+  contactEmail,
+  publications,
+  socialLinks
+}`;
+
+const memberData = await sanityClient.fetch<Member>(query, { slug: member });
+
+if (!memberData) {
+  return Astro.redirect("/404");
+}
+
+const { name = "Default Title", seo = {} } = memberData || {};
+---
+
+<Layout
+  title={name}
+  description={seo.metaDescription || ""}
+  keywords={seo.keywords?.join(", ") || ""}
+  author={name}
+  ogImage={memberData.photoUrl || ""}
+>
+  <div class="container mx-auto px-4 py-8">
+    <div class="p-6">
+      <h1 class="text-xl font-bold">
+        {memberData.academicTitle && <span>{memberData.academicTitle}</span>}{
+          memberData.name
+        }
+      </h1>
+
+      {
+        memberData.photoUrl && (
+          <img
+            src={memberData.photoUrl}
+            alt={memberData.name}
+            class="w-48 h-48 rounded-full mt-4"
+          />
+        )
+      }
+      <p class="mt-4">{memberData.bio}</p>
+
+      {
+        memberData.researchAreas && (
+          <div class="mt-6">
+            <h2 class="text-2xl font-semibold">Research Areas</h2>
+            <ul class="list-disc list-inside">
+              {memberData.researchAreas.map((area) => (
+                <li>{area}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+
+      {
+        memberData.publications && (
+          <div class="mt-6">
+            <h2 class="text-2xl font-semibold">Publications</h2>
+            <ul class="list-disc list-inside">
+              {memberData.publications.map((pub) => (
+                <li>{pub}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+
+      {
+        memberData.socialLinks && (
+          <div class="mt-6">
+            <h2 class="text-2xl font-semibold">Social Links</h2>
+            <ul>
+              {memberData.socialLinks.map((link) => (
+                <li>
+                  <a href={link.url} class="text-blue-500 hover:text-blue-700">
+                    {link.platform}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+
+      {
+        memberData.contactEmail && (
+          <div class="mt-6">
+            <h2 class="text-2xl font-semibold">Contact</h2>
+            <p>
+              Email:{" "}
+              <a
+                href={`mailto:${memberData.contactEmail}`}
+                class="text-blue-500 hover:text-blue-700"
+              >
+                {memberData.contactEmail}
+              </a>
+            </p>
+          </div>
+        )
+      }
+    </div>
+  </div>
+</Layout>

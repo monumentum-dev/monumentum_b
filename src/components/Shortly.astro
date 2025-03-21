@@ -3,6 +3,7 @@ import { sanityClient } from "sanity:client";
 
 import H2Title from "./H2Title.astro";
 import ShortlyCard from "./ShortlyCard.astro";
+import type { Member } from "../types";
 
 const formatDate = (dateString:string) => {
   const months = [
@@ -19,11 +20,7 @@ const formatDate = (dateString:string) => {
   return `${month} ${day} ${hours}:${minutes}`;
 };
 
-interface Member {
-  name: string;
-  academicTitle?: string;
-  photoUrl: string;
-}
+
 
 interface EventsResponse {
   title: string;
@@ -44,6 +41,7 @@ const query = `*[_type == "events"] {
   category,
   attendees[]->{
     name,
+    "slug": slug.current,
     academicTitle,
     photoUrl
   }

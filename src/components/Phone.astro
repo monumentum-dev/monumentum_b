@@ -1,0 +1,61 @@
+---
+import { sanityClient } from "sanity:client";
+import { Image } from "astro:assets";
+import type { ContactInfo } from "../types";
+import phone from "../assets/icons/phone-call.png";
+
+const query = `*[_type == "contactInfo"][0] {
+  phone,
+  email,
+  facebook
+}`;
+
+// Improved retry with exponential backoff
+async function fetchWithRetry(query: string, maxRetries = 3, initialDelay = 500): Promise<ContactInfo | null> {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const data = await sanityClient.fetch(query);
+      
+      // Return the complete data object
+      if (data && typeof data === "object") {
+        return {
+          phone: data.phone || "",
+          email: data.email || "",
+          facebook: data.facebook || ""
+        };
+      }
+    } catch (error) {
+      console.error(`Fetch attempt ${i + 1} failed:`, error);
+    }
+    
+    // Exponential backoff
+    if (i < maxRetries - 1) {
+      const backoffDelay = initialDelay * Math.pow(2, i);
+      await new Promise((resolve) => setTimeout(resolve, backoffDelay));
+    }
+  }
+  
+  console.error("Failed to fetch contact info after multiple attempts.");
+  return null;
+}
+
+const contactData = await fetchWithRetry(query);
+const { hasIcon = true } = Astro.props;
+
+// Fallback value for display
+const phoneNumber = contactData?.phone || "Contact information unavailable";
+---
+
+{
+  phoneNumber !== "Contact information unavailable" ? (
+    hasIcon ? (
+      <a href={`tel:${phoneNumber}`} aria-label="Zadzwoń do nas">
+        <Image src={phone} alt="Phone icon" width={32} height={32} />
+      </a>
+    ) : (
+      <a class="text-sm" href={`tel:${phoneNumber}`} aria-label="Zadzwoń do nas">{phoneNumber}</a>
+    )
+  ) : (
+    null
+  )
+}

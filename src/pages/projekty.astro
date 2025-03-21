@@ -38,49 +38,65 @@ const projectsQuery = `*[_type == "project"]{
 const response = await sanityClient.fetch<PageResponse>(pageQuery);
 
 // Fetch projects list
-const projects = await sanityClient.fetch<{ title: string; slug: string; mainImage?: { asset?: { url: string } } }[]>(projectsQuery);
+const projects =
+  await sanityClient.fetch<
+    { title: string; slug: string; mainImage?: { asset?: { url: string } } }[]
+  >(projectsQuery);
 
 if (!response) {
-    throw new Error("Home page not found in Sanity");
+  throw new Error("Home page not found in Sanity");
 }
 
 const {
-    title = "Default Title",
-    description = "Default Description",
-    keywords = [],
-    author = "Default Author",
-    name = "Default Name",
-    ogImage,
-    content,
+  title = "Default Title",
+  description = "Default Description",
+  keywords = [],
+  author = "Default Author",
+  name = "Default Name",
+  ogImage,
+  content,
 } = response || {};
 ---
 
 <Layout
-    title={title}
-    description={description}
-    keywords={keywords.join(", ")}
-    author={author}
-    ogImage={ogImage?.asset?.url}
+  title={title}
+  description={description}
+  keywords={keywords.join(", ")}
+  author={author}
+  ogImage={ogImage?.asset?.url}
 >
-    <div class="container mt-[5rem]">
-      {projects.length === 0 ? (
+  <div class="container mt-[5rem]">
+    {
+      projects.length === 0 ? (
         <div class="mx-auto p-6 w-full bg-white shadow-lg rounded-lg">
-          <PortableText value={content ?? []} />            
+          <PortableText value={content ?? []} />
         </div>
       ) : (
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
           {projects.map((project) => (
-            <div class="box rounded-lg">
-              {project.mainImage?.asset?.url && (
-                <img src={project.mainImage.asset.url} alt={project.title} class="w-full h-48 object-cover rounded-lg" />
-              )}
-              <div class="p-4">
-                <h2 class="text-xl font-semibold mb-2">{project.title}</h2>
-                <a href={`/projekt/${project.slug}`} class="text-blue-600 hover:underline">Zobacz więcej</a>
+            <a href={`/projekt/${project.slug}`}>
+              <div class="box rounded-lg">
+                {project.mainImage?.asset?.url && (
+                  <img
+                    src={project.mainImage.asset.url}
+                    alt={project.title}
+                    class="w-full h-48 object-cover rounded-lg"
+                  />
+                )}
+                <div class="p-4">
+                  <h2 class="text-xl font-semibold mb-2">{project.title}</h2>
+                  <a
+                    href={`/projekt/${project.slug}`}
+                    class="text-blue-600 hover:underline"
+                  >
+                    Zobacz więcej
+                  </a>
+                </div>
               </div>
-            </div>
+            </a>
           ))}
         </div>
-      )}
-    </div>
+      )
+    }
+  </div>
 </Layout>

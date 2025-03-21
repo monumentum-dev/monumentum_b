@@ -2,8 +2,10 @@
 import { Image } from "astro:assets";
 import logo from "../assets/logo.png";
 import facebook from "../assets/icons/facebook.png";
-import phone from "../assets/icons/phone-call.png";
-import email from "../assets/icons/email.png";
+
+import Phone from "./Phone.astro";
+import Email from "./Email.astro";
+import Facebook from "./Facebook.astro";
 ---
 
 <header class="header">
@@ -50,19 +52,9 @@ import email from "../assets/icons/email.png";
         </nav>
       </div>
       <div class="header__contact flex gap-2 items-center">
-        <a href="mailto:monumentum@xxx.com">
-          <Image class="" src={email} alt="Email icon" width={32} height={32} />
-        </a>
-        <a href="tel:+1234567890">
-          <Image class="" src={phone} alt="Phone icon" width={32} height={32} />
-        </a>
-        <a
-          href="https://www.facebook.com/profile.php?id=61556657347480"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image class="" src={facebook} alt="Facebook logo" width={32} height={32} />
-        </a>
+        <Email hasIcon={true}/>
+        <Phone hasIcon={true} />       
+         <Facebook hasIcon={true} />
       </div>
 
         <button

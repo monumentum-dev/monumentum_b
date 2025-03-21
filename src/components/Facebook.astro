@@ -1,0 +1,62 @@
+---
+import { sanityClient } from "sanity:client";
+import { Image } from "astro:assets";
+import type { ContactInfo } from "../types";
+import facebookIcon from "../assets/icons/facebook.png";
+
+const query = `*[_type == "contactInfo"][0] {
+  phone,
+  email,
+  facebook
+}`;
+
+// Improved retry with exponential backoff
+async function fetchWithRetry(query: string, maxRetries = 3, initialDelay = 500): Promise<ContactInfo | null> {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const data = await sanityClient.fetch(query);
+      
+      // Return the complete data object
+      if (data && typeof data === "object") {
+        return {
+          phone: data.phone || "",
+          email: data.email || "",
+          facebook: data.facebook || ""
+        };
+      }
+    } catch (error) {
+      console.error(`Fetch attempt ${i + 1} failed:`, error);
+    }
+    
+    // Exponential backoff
+    if (i < maxRetries - 1) {
+      const backoffDelay = initialDelay * Math.pow(2, i);
+      await new Promise((resolve) => setTimeout(resolve, backoffDelay));
+    }
+  }
+  
+  console.error("Failed to fetch contact info after multiple attempts.");
+  return null;
+}
+
+const contactData = await fetchWithRetry(query);
+const { hasIcon = true } = Astro.props;
+
+// Fallback value for display
+const facebookUrl = contactData?.facebook || "";
+const hasFacebook = facebookUrl.trim() !== "";
+---
+
+{
+  hasFacebook ? (
+    hasIcon ? (
+      <a href={facebookUrl} target="_blank" rel="noopener noreferrer" aria-label="Odwiedź naszą stronę na Facebooku">
+        <Image src={facebookIcon} alt="Facebook icon" width={32} height={32} />
+      </a>
+    ) : (
+      <a class="cursor-pointer" href={facebookUrl} target="_blank" rel="noopener noreferrer">Facebook</a>
+    )
+  ) : (
+    null
+  )
+}

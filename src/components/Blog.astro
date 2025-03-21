@@ -27,7 +27,7 @@ const postQuery = `*[_type == "blogPost"]{
  
 } | order(publishedAt desc)
 `;
-const post = Astro.params.post;
+
 const response = await sanityClient.fetch<CardsResponse[]>(postQuery);
 
 if (!response) {

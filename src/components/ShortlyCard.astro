@@ -1,9 +1,8 @@
 ---
-interface Member {
-  name: string;
-  academicTitle?: string;
-  photoUrl: string;
-}
+
+import type { Member } from "../types";
+import Attendee from "./Attendee.astro";
+import MapLink from "./MapLink.astro";
 
 interface Props {
   title: string;
@@ -25,8 +24,6 @@ const {
   category,
 } = Astro.props;
 
-import Attendee from "./Attendee.astro";
-import MapLink from "./MapLink.astro";
 ---
 
 <div class="flex flex-wrap gap-4 justify-around bg-white box">
@@ -58,7 +55,7 @@ import MapLink from "./MapLink.astro";
         </div>
         <div class="flex gap-4 items-center">
           {attendees.map((attendee) => (
-            <Attendee name={attendee.name} photoUrl={attendee.photoUrl} academicTitle={attendee.academicTitle} />
+            <Attendee slug={attendee.slug} name={attendee.name} photoUrl={attendee.photoUrl} academicTitle={attendee.academicTitle} />
           ))}
         </div>
       </div>
