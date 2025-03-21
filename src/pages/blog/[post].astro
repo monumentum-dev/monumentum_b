@@ -77,6 +77,7 @@ const postQuery = `*[_type == "blogPost" && slug.current == $slug][0] {
   attendee->{
     _id,
     name,
+    "slug": slug.current,
     academicTitle,
     photoUrl,  
   },
@@ -106,6 +107,7 @@ const postsResponse = await sanityClient.fetch<PostsResponse>(postQuery, {
 });
 
 
+
 // Get project slug from URL
 const {
   title = "Default Title",
@@ -133,9 +135,9 @@ const {
     </div>
     <div class="flex justify-between items-center my-4">
       <div>{formatDate(publishedAt)}</div>
-      <Attendee
-        slug={postsResponse?.attendee?.slug ? postsResponse.attendee.slug: ""}
+      <Attendee       
         name={postsResponse?.attendee?.name ? postsResponse.attendee.name : ""}
+        slug={postsResponse?.attendee?.slug ? postsResponse.attendee.slug: ""}
         photoUrl={postsResponse?.attendee?.photoUrl
           ? postsResponse?.attendee?.photoUrl
           : ""}
