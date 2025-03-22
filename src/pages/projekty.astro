@@ -65,14 +65,14 @@ const {
   author={author}
   ogImage={ogImage?.asset?.url}
 >
-  <div class="container mt-[5rem]">
+  <div class="container my-[2rem]  lg:my-[5rem]">
     {
       projects.length === 0 ? (
         <div class="mx-auto p-6 w-full bg-white shadow-lg rounded-lg">
           <PortableText value={content ?? []} />
         </div>
       ) : (
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {projects.map((project) => (
             <a href={`/projekt/${project.slug}`}>
               <div class="box rounded-lg">
