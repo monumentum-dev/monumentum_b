@@ -31,6 +31,12 @@ export interface ImageData {
             url: string;
         };
     };
+    images?: {
+      src: string;
+      title: string;
+      description: string;
+    }[];
+    
     name: string;
 }
 
