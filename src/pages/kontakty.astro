@@ -4,6 +4,7 @@ import Layout from "../layouts/Layout.astro";
 import Phone from "../components/Phone.astro";
 import Email from "../components/Email.astro";
 import Facebook from "../components/Facebook.astro";
+import H2Title from "../components/H2Title.astro";
 
 export interface PageResponse {
   _id: string;
@@ -56,7 +57,8 @@ const {
   author={author}
   ogImage={ogImage?.asset?.url}
 >
- <div class="container  my-[2rem]  lg:my-[4rem] box">    
+<div class="mt-[1rem] lg:mt-[2rem]"><H2Title text = {title}/></div>
+<div class="container my-[1rem] lg:my-[2rem] box">    
     <div class="mx-auto p-6 w-full bg-white shadow-lg rounded-lg">
         <div class="flex flex-col items-center text-center">
           <img src="https://res.cloudinary.com/dijj9tdzd/image/upload/w_1000,ar_1:1,c_fill,g_auto,e_art:hokusai/v1740132396/Anna_Polak_w8lyyv.jpg" alt="Anna Polak" class="w-32 h-32 rounded-full shadow-md mb-4">

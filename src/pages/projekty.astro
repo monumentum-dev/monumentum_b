@@ -4,6 +4,7 @@ import { sanityClient } from "sanity:client";
 import Layout from "../layouts/Layout.astro";
 import { PortableText } from "astro-portabletext";
 import type { PageResponse } from "../types";
+import H2Title from "../components/H2Title.astro";
 
 // Query for the "projekty" page
 const pageQuery = `*[_type == "pages" && name == "projekty"][0]{
@@ -66,7 +67,8 @@ const {
   author={author}
   ogImage={ogImage?.asset?.url}
 >
-  <div class="container my-[2rem]  lg:my-[5rem]">
+<div class="mt-[1rem] lg:mt-[2rem]"><H2Title text = {title}/></div>
+<div class="container my-[1rem] lg:my-[2rem]"> 
     {
       projects.length === 0 ? (
         <div class="mx-auto p-6 w-full bg-white shadow-lg rounded-lg">

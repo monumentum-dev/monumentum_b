@@ -1,26 +1,33 @@
 ---
 import { sanityClient } from "sanity:client";
-
 import H2Title from "./H2Title.astro";
 import ShortlyCard from "./ShortlyCard.astro";
 import type { Member } from "../types";
 
-const formatDate = (dateString:string) => {
+const formatDate = (dateString: string) => {
   const months = [
-    "Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec",
-    "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień"
+    "Styczeń",
+    "Luty",
+    "Marzec",
+    "Kwiecień",
+    "Maj",
+    "Czerwiec",
+    "Lipiec",
+    "Sierpień",
+    "Wrzesień",
+    "Październik",
+    "Listopad",
+    "Grudzień",
   ];
 
   const date = new Date(dateString);
-  const day = date.getDate().toString().padStart(2, '0'); // Двузначный день
-  const month = months[date.getMonth()]; // Название месяца
-  const hours = date.getHours().toString().padStart(2, '0'); // Двузначные часы
-  const minutes = date.getMinutes().toString().padStart(2, '0'); // Двузначные минуты
+  const day = date.getDate().toString().padStart(2, "0");
+  const month = months[date.getMonth()];
+  const hours = date.getHours().toString().padStart(2, "0");
+  const minutes = date.getMinutes().toString().padStart(2, "0");
 
   return `${month} ${day} ${hours}:${minutes}`;
 };
-
-
 
 interface EventsResponse {
   title: string;
@@ -32,52 +39,85 @@ interface EventsResponse {
   attendees: Member[];
 }
 
-const query = `*[_type == "events"] {
-  title,
-  date,
-  description,
-  backgroundImages,
-  mapLink,
-  category,
-  attendees[]->{
-    name,
-    "slug": slug.current,
-    academicTitle,
-    photoUrl
+// Function to validate event data
+const isValidEvent = (event: EventsResponse): boolean => {
+  return (
+    typeof event.title === "string" &&
+    typeof event.date === "string" &&
+    typeof event.description === "string" &&
+    Array.isArray(event.backgroundImages) &&
+    event.backgroundImages.length > 0 &&
+    typeof event.mapLink === "string" &&
+    typeof event.category === "string"  
+  );
+};
+
+let events: any[] = [];
+let error: string | null = null;
+
+try {
+  const query = `*[_type == "events"] {
+    title,
+    date,
+    description,
+    backgroundImages,
+    mapLink,
+    category,
+    attendees[]->{
+      name,
+      "slug": slug.current,
+      academicTitle,
+      photoUrl
+    }
+  }`;
+
+  const response = await sanityClient.fetch<EventsResponse[]>(query);
+
+  // Check if response exists and is an array
+  if (!response || !Array.isArray(response)) {
+    throw new Error("Invalid response from Sanity");
   }
-}`;
 
-const response = await sanityClient.fetch<EventsResponse[]>(query);
+  // Filter and validate events
+  events = response.filter(isValidEvent).map((event) => ({
+    title: event.title,
+    date: formatDate(event.date),
+    description: event.description,
+    backgroundImage: event.backgroundImages[0],
+    mapLink: event.mapLink,
+    attendees: event.attendees,
+    category: event.category,
+  }));
 
-if (!response) {
-  throw new Error("Home page not found in Sanity");
+  // If no valid events found, throw an error
+  if (events.length === 0) {
+    throw new Error("No valid events found");
+  }
+} catch (catchError) {
+  // Log the error
+  console.error("Events Fetch Error:", catchError);
+  error =
+    catchError instanceof Error ? catchError.message : "Unknown error occurred";
 }
-
-const events = response.map(event => ({
-  title: event.title,
-  date: formatDate(event.date),
-  description: event.description,
-  backgroundImage: event.backgroundImages[0], 
-  mapLink: event.mapLink,
-  attendees: event.attendees,
-  category: event.category
-}));
-
 ---
 
-<div class="container mt-[4rem]">   
-    <H2Title text = "nadchodzące zdarzenia"/>
-    <div class="flex flex-wrap gap-4 justify-around">
+{
+  error ? null : events.length > 0 ? (
+    <div class="container mt-[4rem]">
+      <H2Title text="nadchodzące zdarzenia" />
+      <div class="flex flex-wrap gap-4 justify-around">
         {events.map((event) => (
-            <ShortlyCard 
-              title={event.title} 
-              date={event.date} 
-              description={event.description} 
-              backgroundImage={event.backgroundImage} 
-              mapLink={event.mapLink} 
-              attendees={event.attendees} 
-              category={event.category} 
-            />
-          ))}
-</div>
-</div>
+          <ShortlyCard
+            title={event.title}
+            date={event.date}
+            description={event.description}
+            backgroundImage={event.backgroundImage}
+            mapLink={event.mapLink}
+            attendees={event.attendees}
+            category={event.category}
+          />
+        ))}
+      </div>
+    </div>
+  ) : null
+}

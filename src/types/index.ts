@@ -49,13 +49,16 @@ export interface ContactInfo {
 export interface Member {
   name: string;
   slug: string;
-  academicTitle?: string;
   photoUrl: string;
-  bio: string;
+  academicTitle?: string;
+  bio?: string;
   researchAreas?: string[];
   contactEmail?: string;
   publications?: string[];
-  socialLinks?: { platform: string; url: string }[];
+  socialLinks?: {
+    platform: string;
+    url: string;
+  }[];
   seo?: {
     metaTitle?: string;
     metaDescription?: string;

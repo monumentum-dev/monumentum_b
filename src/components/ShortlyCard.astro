@@ -1,8 +1,30 @@
 ---
-
 import type { Member } from "../types";
 import Attendee from "./Attendee.astro";
 import MapLink from "./MapLink.astro";
+
+export function validateAttendees(attendees: unknown): attendees is Member[] {
+  // Check if it's an array
+  if (!Array.isArray(attendees)) return false;
+
+  // Validate each attendee
+  return attendees.every(
+    (attendee) =>
+      typeof attendee === "object" &&
+      attendee !== null &&
+      typeof attendee.name === "string" &&
+      typeof attendee.slug === "string" &&
+      typeof attendee.photoUrl === "string",
+  );
+}
+
+// Example usage in your component
+export function processAttendees(attendees: unknown): Member[] {
+  if (validateAttendees(attendees)) {
+    return attendees;
+  }
+  return []; // Return empty array if invalid
+}
 
 interface Props {
   title: string;
@@ -23,42 +45,54 @@ const {
   attendees,
   category,
 } = Astro.props;
-
 ---
 
 <div class="flex flex-wrap gap-4 justify-around bg-white box">
-    <div class="max-w-xs w-full lg:max-w-full lg:flex ">
-      <div
-        class="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden"
-        style={`background-image: url('${backgroundImage}')`}
-        title={title}
-      ></div>
-      <div class="bg-white rounded-b lg:rounded-r p-4 flex flex-col justify-between leading-normal">
-        <div class="mb-8">
-          <div class="flex items-center"> 
-            <div class="flex gap-4 items-center mb-4">
-              <p class="text-sm text-black flex items-center  uppercase tracking-widest px-4 category-background">
-                {category}
-              </p>
-              <div class="text-sm">
-                <p class="text-black underline">{date}</p>
-              </div>
-              <MapLink link={mapLink} />
+  <div class="max-w-xs w-full lg:max-w-full lg:flex">
+    <div
+      class="h-48 lg:h-auto lg:w-48 flex-none bg-cover rounded-t lg:rounded-t-none lg:rounded-l text-center overflow-hidden"
+      style={`background-image: url('${backgroundImage}')`}
+      title={title}
+    >
+    </div>
+    <div
+      class="bg-white rounded-b lg:rounded-r p-4 flex flex-col justify-between leading-normal"
+    >
+      <div class="mb-8">
+        <div class="flex items-center">
+          <div class="flex gap-4 items-center mb-4">
+            <p
+              class="text-sm text-black flex items-center uppercase tracking-widest px-4 category-background"
+            >
+              {category}
+            </p>
+            <div class="text-sm">
+              <p class="text-black underline">{date}</p>
             </div>
+            <MapLink link={mapLink} />
           </div>
-          <div class="text-gray-900 font-bold text-xl mb-2">
-            {title}
-          </div>
-          <p class="text-gray-700 text-base">
-            {description}
-          </p>
         </div>
-        <div class="flex gap-4 items-center">
-          {attendees.map((attendee) => (
-            <Attendee slug={attendee.slug} name={attendee.name} photoUrl={attendee.photoUrl} academicTitle={attendee.academicTitle} />
-          ))}
+        <div class="text-gray-900 font-bold text-xl mb-2">
+          {title}
         </div>
+        <p class="text-gray-700 text-base">
+          {description}
+        </p>
       </div>
+      {
+       Array.isArray(attendees) && attendees.length > 0 && validateAttendees(attendees) && (
+          <div class="flex gap-4 items-center">
+            {attendees.map((attendee) => (
+              <Attendee
+                slug={attendee.slug}
+                name={attendee.name}
+                photoUrl={attendee.photoUrl}
+                academicTitle={attendee.academicTitle}
+              />
+            ))}
+          </div>
+        )
+      }
     </div>
   </div>
- 
+</div>
