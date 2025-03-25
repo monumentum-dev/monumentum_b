@@ -8,7 +8,33 @@ import type { PageResponse } from "../types";
 import ImageShowcase from "../components/ImageShowcase.astro";
 import H2Title from "../components/H2Title.astro";
 
-
+// Function to validate page data
+const isValidPage = (page: PageResponse): boolean => {
+  return (
+    typeof page._id === "string" &&
+    typeof page.title === "string" &&
+    typeof page.description === "string" &&
+    Array.isArray(page.keywords) &&
+    page.keywords.every((keyword) => typeof keyword === "string") &&
+    typeof page.author === "string" &&
+    typeof page.name === "string" &&
+    // Validate content (optional array)
+    (page.content === undefined || 
+     (Array.isArray(page.content) && 
+      page.content.every(item => 
+        item._type === "block" || 
+        (item._type === "image" && typeof item.url === "string")
+      )
+     )
+    ) &&
+    // Validate ogImage (optional but must have correct structure if present)
+    (page.ogImage === undefined || 
+     (typeof page.ogImage === "object" && 
+      page.ogImage !== null && 
+      typeof page.ogImage.asset?.url === "string")
+    )   
+  );
+};
 
 const query = `*[_type == "pages" && name == "o_nas"][0]{
   _id,
@@ -39,9 +65,7 @@ const query = `*[_type == "pages" && name == "o_nas"][0]{
 
 const response = await sanityClient.fetch<PageResponse>(query);
 
-if (!response) {
-    throw new Error("Home page not found in Sanity");
-}
+
 
 const {
     title = "Default Title",
@@ -63,11 +87,12 @@ const {
     author={author}
     ogImage={ogImage?.asset?.url}
 >
-    <div class="mt-[1rem] lg:mt-[2rem]"><H2Title text = {title}/></div>
-    <div class="container my-[1rem] lg:my-[2rem] box">      
-        <div class="mx-auto p-6 w-full bg-white shadow-lg rounded-lg">
-            {content?<PortableText value={content ?? []} />:"Strona jest w trakcie tworzenia"}
-            {images.length > 0 && <ImageShowcase images={images ?? []} />}
-        </div>         
-    </div>
+{!response || !isValidPage(response) ? <div class="container my-[1rem] lg:my-[2rem] box"><div class="py-10 text-center font-semibold">Strona jest w trakcie tworzenia</div></div> : (<div class="mt-[1rem] lg:mt-[2rem]"><H2Title text = {title}/></div>
+<div class="container my-[1rem] lg:my-[2rem] box">      
+    <div class="mx-auto p-6 w-full bg-white shadow-lg rounded-lg">
+        {content?<PortableText value={content ?? []} />:"Strona jest w trakcie tworzenia"}
+        {images.length > 0 && <ImageShowcase images={images ?? []} />}
+    </div>         
+</div>)}
+    
 </Layout>
